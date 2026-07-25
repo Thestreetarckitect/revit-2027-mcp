@@ -115,4 +115,43 @@ Why they convert: a numbered promise is a clear contract — friction drops to z
 
 ---
 
+## Zero to BIM — Teleprompter Scripts (keyword: ZEROBIM)
+
+Each script below is written to be read **straight through**. Spoken words only, one block.
+Production notes are kept separate underneath so they never break your read.
+Length target: 60 to 89 seconds. Say ZEROBIM out loud and leave it on screen the final 5 seconds. Pin a ZEROBIM comment the second it posts.
+
+---
+
+### Version 1 — Straight teach
+
+Everybody at your firm keeps saying BIM like you are supposed to already know it. Here is how you actually start from zero. There are 3 things nobody tells beginners. One. BIM is not Revit. Revit is the tool. BIM is the process behind it. Learn the process first or you will just be clicking buttons you do not understand. Two. You do not model everything. You model what the project needs to coordinate. Beginners waste weeks adding detail nobody uses. Three. Coordination is the whole game. The moment your model talks to the mechanical and structural models you are doing real BIM. That is it. Process, then the right level of model, then coordination. Get those three and you are ahead of most people who have been faking it for years. I put all of this into a free Zero to BIM beginners guide. Comment ZEROBIM and I will send it straight to your DMs. Then join the free community in the link and I will help you build your first real model.
+
+**Production notes:** Talking to camera cut with Revit screen recordings. Open on a coordinated model rotating. Show a red clash flash on the coordination line. Screen change every 4 to 7 seconds. Keyword on screen last 5 seconds.
+**Caption:** Everybody says BIM like you should already know it. Here is how you actually start from zero. Comment ZEROBIM for the free beginners guide 👇
+
+---
+
+### Version 2 — Story angle
+
+Nobody in my neighbourhood talked about architecture as a way out. I found BIM by accident and it changed everything. Here is what I would tell my younger self starting from zero. First job I ever touched Revit I was faking it. I thought BIM meant knowing every button. It does not. BIM is a process. The software is just where the process lives. Once that clicked I stopped memorizing tools and started learning how a model gets coordinated. That is the skill that pays. Six months later I was the one running coordination for the whole team. Not because I knew more buttons. Because I understood the process. If you are starting from zero you are not behind. You just need the right map. I built one. It is a free Zero to BIM beginners guide. Comment ZEROBIM and I will send it to your DMs. Then join the free community in the link and start where I wish I had.
+
+**Production notes:** Talk to camera, closer and slower than Version 1. Let the story breathe. Drop one or two screen recordings only, under the "coordination" line. Keyword on screen last 5 seconds.
+**Caption:** Found BIM by accident and it changed everything. Here is what I would tell myself starting from zero. Comment ZEROBIM for the free guide 👇
+
+---
+
+### Version 3 — Contrarian angle
+
+Stop trying to learn every Revit button. It is the slowest way into BIM and nobody tells you that. Here is what actually works. Most beginners think BIM means mastering the software. Wrong. Firms do not pay you to click fast. They pay you to coordinate. You could know every tool in Revit and still be useless on a real project. Or you could learn three things and be ahead of people with years on you. Understand the process. Model only what needs to coordinate. Then make your model talk to the other trades. That is BIM. The buttons come later and they come easy once you get the process. I put the whole beginner path into a free Zero to BIM guide. Comment ZEROBIM and I will send it to your DMs. Then join the free community in the link and skip the year I wasted.
+
+**Production notes:** Punchy energy. Open on the "stop" line with a hard cut. Fast screen recordings behind the three steps. Screen change every 4 seconds through the middle. Keyword on screen last 5 seconds.
+**Caption:** Stop learning every Revit button. It is the slowest way into BIM. Here is what actually works. Comment ZEROBIM for the free guide 👇
+
+---
+
+**Test plan:** Post all three across one week, same keyword ZEROBIM, different hook angles. Check ManyChat opt-ins per post to see whether teach, story, or contrarian pulls hardest for your audience. Double down on the winner.
+
+---
+
 *Reusable reference for The Street Architect. Keywords map 1:1 to ManyChat flows — keep them in sync.*
