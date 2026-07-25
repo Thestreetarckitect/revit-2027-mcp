@@ -154,4 +154,38 @@ Stop trying to learn every Revit button. It is the slowest way into BIM and nobo
 
 ---
 
+## More Teleprompter Scripts — FIX, FAMILY, SPEED
+
+Same rules: read straight through, spoken words only, production notes underneath.
+Length target 60 to 89 seconds. Keyword out loud + on screen the final 5 seconds. Pin the keyword comment the second it posts.
+
+---
+
+### FIX — crash-proof settings sheet (pain hook)
+
+Revit crashing every time you open a big model. You blame your computer. It is not your computer. It is 3 settings nobody set for you. Here they are. One. Your journal files and backups are piling up and dragging every save. Clean them out and set a cap. Two. You are working on a huge central file with worksets you never open. Close what you are not using and Revit stops choking on it. Three. Your graphics settings are fighting your hardware. One toggle in the options menu and the crashes stop. That is usually all it is. Three settings, ten minutes, and the model that kept dying stays open all day. I put the exact settings and where to find each one into a free crash-fix sheet. Comment FIX and I will send it straight to your DMs. Then join the free community in the link and bring the file that keeps crashing.
+
+**Production notes:** Open on a Revit crash dialog or spinning wheel, real footage if you have it. Screen record each setting as you say it. Fast cuts, frustrated-to-relieved energy. Keyword on screen last 5 seconds.
+**Caption:** Revit crashing on big models is not your computer. It is 3 settings. Comment FIX for the free crash-fix sheet 👇
+
+---
+
+### FAMILY — family template pack (curiosity hook)
+
+Still building families from scratch every time. That is why they break, that is why they take you all day. Here is what changed it for me. Most people start a new family from a blank template and rebuild the same bones over and over. Reference planes, parameters, constraints, all from zero. Then it flexes wrong and they cannot figure out why. The fix is not modeling harder. It is starting from a family that is already built right. A clean template with the reference planes locked, the parameters wired, and the constraints holding. You drop in the geometry and it just flexes. What took a day takes twenty minutes and it does not break in the project. I built a pack of these templates you can start from today. Comment FAMILY and I will send the pack to your DMs. Then join the free community in the link and I will show you how to flex your first one.
+
+**Production notes:** Screen recording front and centre. Show a family flexing correctly, then a bad one breaking. Contrast the two hard. Keyword on screen last 5 seconds.
+**Caption:** Building families from scratch is why they break and eat your whole day. Comment FAMILY for the free template pack 👇
+
+---
+
+### SPEED — 12-shortcut cheat sheet (curiosity hook)
+
+There is a way to move through Revit twice as fast and most people in this industry never learned it. It is not a plugin. It is not AI. It is keyboard shortcuts nobody taught you. Watch. Every time you reach for the ribbon you lose a second. Do that a thousand times a day and you have lost an hour. The fastest people in any office are not smarter. Their hands never leave the keyboard. Wall is WA. Door is DR. Align is AL. Trim is TR. Twelve of these cover most of what you do all day. Learn them once and you never think about them again. You just move. I put the twelve that matter most into a free cheat sheet you can tape to your monitor. Comment SPEED and I will send it to your DMs. Then join the free community in the link and I will show you how to set your own.
+
+**Production notes:** Screen recording of fast modeling, hands-on-keyboard energy. Flash each shortcut as text as you say it. Quick cuts throughout. Keyword on screen last 5 seconds.
+**Caption:** There is a way to move through Revit twice as fast. It is not a plugin. Comment SPEED for the free shortcut cheat sheet 👇
+
+---
+
 *Reusable reference for The Street Architect. Keywords map 1:1 to ManyChat flows — keep them in sync.*
