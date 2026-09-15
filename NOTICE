@@ -1,0 +1,40 @@
+Revit 2027 MCP
+Packaged distribution by TheStreetArckitect LLC
+
+This product includes software developed by the RvtMcp project.
+
+  RvtMcp
+  https://github.com/bimwright/rvt-mcp
+  Licensed under the Apache License, Version 2.0
+
+This repository redistributes compiled artifacts from that project:
+
+  server/rvt-mcp.exe          RvtMcp MCP server, v0.5.0
+  server/RvtMcp.Server.pdb    debug symbols for the above
+  addin/RvtMcp.Plugin.dll     Revit addin assembly
+
+Those binaries are the work of the upstream RvtMcp authors and remain under the
+Apache License, Version 2.0. A copy of that license is included in this
+repository as LICENSE.
+
+Changes made in this distribution
+---------------------------------
+- Packaged for Autodesk Revit 2027 specifically, rather than the upstream
+  multi-year (2022-2027) source tree.
+- Added install.ps1, a simplified per-user deployment script that copies the
+  addin and server into %APPDATA% and %LOCALAPPDATA% without requiring admin.
+- Added README.md and docs/ written for this distribution, including client
+  configuration for Claude, Codex and Cursor.
+- No modifications to upstream source code. The redistributed binaries are
+  unmodified build outputs.
+
+Other credits
+-------------
+Workshop material and prompt strategies in README.md adapted from the
+"Revit x Claude MCP Workshop" slide deck by Abdelrhman Hosny, BIM/VDC Engineer.
+
+Trademarks
+----------
+Autodesk and Revit are trademarks of Autodesk, Inc. Claude is a trademark of
+Anthropic, PBC. Codex is a trademark of OpenAI. This project is not affiliated
+with, endorsed by, or sponsored by any of them.

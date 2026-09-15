@@ -1,7 +1,8 @@
 <div align="center">
 
 <img src="https://img.shields.io/badge/Revit-2027-0070AD?style=for-the-badge&logo=autodesk&logoColor=white"/>
-<img src="https://img.shields.io/badge/Claude-MCP-D97757?style=for-the-badge&logo=anthropic&logoColor=white"/>
+<img src="https://img.shields.io/badge/MCP-stdio-D97757?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Claude%20%7C%20Codex%20%7C%20Cursor-supported-1F6FEB?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Tools-150%2B-7B2D8B?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Version-0.5.0-2EA043?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows&logoColor=white"/>
@@ -10,8 +11,8 @@
 
 # Revit 2027 MCP
 
-**Claude MCP integration for Autodesk Revit 2027.**  
-Exposes 150+ Revit API tools directly to Claude — query, create, modify, export, clash detect, and automate your BIM model using natural language.
+**MCP server for Autodesk Revit 2027.**  
+Exposes 150+ Revit API tools to any MCP client — Claude, Codex, Cursor — to query, create, modify, export, clash detect, and automate your BIM model using natural language.
 
 > *"Think of MCP like a USB-C port for AI — one standard that connects to anything."*
 
@@ -37,18 +38,22 @@ Exposes 150+ Revit API tools directly to Claude — query, create, modify, expor
 ## 🏗️ Architecture
 
 ```
-Claude (MCP client)
-      ↕  stdio
+MCP client  (Claude Code · Claude Desktop · Codex · Cursor)
+      ↕  stdio          ← standard MCP transport, client-agnostic
 rvt-mcp.exe  (MCP server — .NET 8 self-contained)
-      ↕  HTTP / named pipe
+      ↕  named pipe + auth token
 RvtMcp.Plugin.dll  (Revit addin)
       ↕  Revit API
 .rvt model
 ```
 
-**Flow:** ① User writes natural language → ② Claude picks the right MCP tool → ③ Server translates to Revit API call → ④ Plugin runs it inside Revit → ⑤ Result streams back to Claude
+**Flow:** ① User writes natural language → ② client picks the right MCP tool → ③ server translates to a Revit API call → ④ plugin runs it inside Revit → ⑤ result streams back
 
-> Claude never touches Revit directly — it sends structured commands that the plugin interprets and runs inside Revit's API.
+> The client never touches Revit directly — it sends structured commands that the plugin interprets and runs inside Revit's API.
+>
+> The **stdio** hop is why any MCP client works. The named pipe is internal, between the
+> server and the addin, and no client ever sees it — the pipe name and auth token are
+> regenerated into `revit-2027.json` each time Revit starts.
 
 ---
 
@@ -58,7 +63,7 @@ RvtMcp.Plugin.dll  (Revit addin)
 |-------------|---------|
 | **Revit** | Autodesk Revit 2027 |
 | **OS** | Windows 10 / 11 x64 |
-| **Claude** | Claude Desktop or Claude Code with MCP support |
+| **MCP client** | Any client that speaks stdio MCP — Claude Code, Claude Desktop, Codex (CLI / IDE / Desktop), Cursor |
 
 ---
 
@@ -77,7 +82,12 @@ Deploys automatically — no admin required:
 
 ---
 
-## 🔌 Claude MCP Config
+## 🔌 MCP Client Config
+
+The server speaks **stdio**, the standard MCP transport — so any MCP client can drive it.
+Same binary, no rebuild. Only the config file format differs.
+
+### Claude Code / Claude Desktop
 
 Add to `~/.claude.json` under `mcpServers`:
 
@@ -88,9 +98,44 @@ Add to `~/.claude.json` under `mcpServers`:
 }
 ```
 
+### OpenAI Codex (CLI, IDE extension, Desktop)
+
+Add to `%USERPROFILE%\.codex\config.toml` — note TOML, and `mcp_servers` with an
+underscore:
+
+```toml
+[mcp_servers.rvt-mcp]
+command = 'C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe'
+args = []
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+```
+
+Or from the terminal:
+
+```bash
+codex mcp add rvt-mcp -- "C:\\Users\\<user>\\AppData\\Local\\RvtMcp\\rvt\\server\\0.5.0\\rvt-mcp.exe"
+```
+
+Use **user scope**, not a project `.codex/config.toml` — Codex Desktop ignores
+project-scoped config ([#13025](https://github.com/openai/codex/issues/13025)).
+
+Full options, read-only profiles and per-tool approval gates:
+**[docs/mcp-config-codex.md](docs/mcp-config-codex.md)**
+
+### Cursor
+
+Add to `~/.cursor/mcp.json` using the same JSON shape as Claude.
+
+---
+
+> ⚠️ **Run one client at a time.** Each client spawns its own `rvt-mcp.exe`, and both
+> would drive the same Revit instance over the same named pipe. Revit's API is not built
+> for concurrent external drivers.
+
 **Verify connection:**
 1. Open Revit 2027 — addin loads automatically on startup
-2. In Claude, run: `get current view info` — should return Revit model state
+2. In your client, run: `get current view info` — should return Revit model state
 3. Check `%LOCALAPPDATA%\RvtMcp\revit-mcp.log` if something fails
 
 ---
@@ -177,7 +222,8 @@ Add to `~/.claude.json` under `mcpServers`:
 | **No visual access** | Claude cannot see 3D views or screenshots — interaction is purely data-driven |
 | **Complex geometry** | Free-form surfaces and intricate solid operations often fail |
 | **Code review required** | AI-generated C# code must be reviewed before running on production models |
-| **Claude Desktop only** | MCP requires Claude Desktop or Claude Code — the web version does not support MCP |
+| **Desktop clients only** | MCP needs a local client — Claude Code/Desktop, Codex, Cursor. Browser-based chat cannot reach a stdio server |
+| **One client at a time** | Two clients would drive the same Revit instance concurrently; the API does not support that |
 | **Revit API boundaries** | Some read-only contexts block writes; Claude is bound by the same rules as any plugin |
 | **Prompt precision** | Vague prompts lead to wrong tool calls — specific prompts dramatically improve accuracy |
 
@@ -393,9 +439,20 @@ Include headers. Format for Excel import.
 
 ---
 
-## 👤 Credits
+## 👤 Credits & License
 
-Workshop material and prompt strategies adapted from the **"Revit × Claude MCP Workshop"** slide deck by **Abdelrhman Hosny**, BIM/VDC Engineer.
+Built on **[RvtMcp](https://github.com/bimwright/rvt-mcp)** by bimwright — the MCP server
+and Revit addin binaries redistributed here are their work, licensed **Apache-2.0**.
+This repository packages v0.5.0 for Revit 2027 with a per-user installer and client
+documentation. See [NOTICE](NOTICE) for the full attribution and the list of changes.
+
+Workshop material and prompt strategies adapted from the **"Revit × Claude MCP Workshop"**
+slide deck by **Abdelrhman Hosny**, BIM/VDC Engineer.
+
+Licensed under the Apache License 2.0 — see [LICENSE](LICENSE).
+
+Autodesk and Revit are trademarks of Autodesk, Inc. Claude is a trademark of Anthropic, PBC.
+Codex is a trademark of OpenAI. This project is not affiliated with any of them.
 
 ---
 

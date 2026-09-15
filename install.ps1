@@ -19,12 +19,30 @@ Copy-Item "$scriptDir\server\rvt-mcp.exe" "$serverTarget\rvt-mcp.exe" -Force
 Copy-Item "$scriptDir\server\RvtMcp.Server.pdb" "$serverTarget\RvtMcp.Server.pdb" -Force
 Write-Host "  Server deployed to $serverTarget"
 
+$exePath  = Join-Path $serverTarget 'rvt-mcp.exe'
+$exeJson  = $exePath.Replace('\', '\\')
+
 Write-Host ""
-Write-Host "Done. Add this to your Claude MCP config (~/.claude.json mcpServers):"
+Write-Host "Done. The server speaks stdio, so any MCP client can use it."
+Write-Host "Pick the config for the client you run:"
+Write-Host ""
+Write-Host "--- Claude Code / Claude Desktop  ->  ~/.claude.json  (mcpServers) ---" -ForegroundColor Cyan
 Write-Host ""
 Write-Host '  "rvt-mcp": {'
-Write-Host '    "command": "' + $serverTarget.Replace("\","\\") + '\\rvt-mcp.exe",'
+Write-Host "    `"command`": `"$exeJson`","
 Write-Host '    "args": []'
 Write-Host '  }'
 Write-Host ""
+Write-Host "--- OpenAI Codex  ->  %USERPROFILE%\.codex\config.toml ---" -ForegroundColor Cyan
+Write-Host ""
+Write-Host '  [mcp_servers.rvt-mcp]'
+Write-Host "  command = '$exePath'"
+Write-Host '  args = []'
+Write-Host '  startup_timeout_sec = 30'
+Write-Host '  tool_timeout_sec = 120'
+Write-Host ""
+Write-Host "  or run:  codex mcp add rvt-mcp -- `"$exeJson`""
+Write-Host ""
+Write-Host "Run one client at a time - two clients cannot drive the same Revit instance." -ForegroundColor Yellow
 Write-Host "Then open Revit 2027 and verify the RvtMcp addin loads."
+Write-Host "Codex details: docs/mcp-config-codex.md"
