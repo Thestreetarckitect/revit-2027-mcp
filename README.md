@@ -117,8 +117,17 @@ Or from the terminal:
 codex mcp add rvt-mcp -- "C:\\Users\\<user>\\AppData\\Local\\RvtMcp\\rvt\\server\\0.5.0\\rvt-mcp.exe"
 ```
 
-Use **user scope**, not a project `.codex/config.toml` — Codex Desktop ignores
-project-scoped config ([#13025](https://github.com/openai/codex/issues/13025)).
+> ⚠️ **Use the Codex CLI, not Codex Desktop.** Desktop ships as a Microsoft Store MSIX
+> package and runs in a Windows AppContainer, which cannot see `rvt-mcp.exe` in
+> `%LOCALAPPDATA%` regardless of file permissions. `codex doctor` reports the executable
+> as "not found at its configured path" even though it is there. The CLI is a plain
+> executable outside the package and works normally.
+> Full explanation in [docs/mcp-config-codex.md §1a](docs/mcp-config-codex.md).
+
+The CLI lives at `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`. Run it from an
+open terminal — Win+R will not work, it is a console app.
+
+Verify with `codex mcp get rvt-mcp`.
 
 Full options, read-only profiles and per-tool approval gates:
 **[docs/mcp-config-codex.md](docs/mcp-config-codex.md)**

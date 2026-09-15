@@ -13,11 +13,11 @@ For Anthropic clients see [`mcp-config-claude.md`](./mcp-config-claude.md).
 
 ## 1. Three Codex surfaces, one config file (mostly)
 
-| Client | Reads | Status |
+| Client | Reads | Works with RvtMcp? |
 |---|---|---|
-| **Codex CLI** (`codex` in terminal) | `~/.codex/config.toml` + `<project>/.codex/config.toml` if trusted | Full support |
-| **Codex IDE extension** (VS Code, JetBrains) | Same files as CLI — config is shared | Full support |
-| **Codex Desktop** (standalone app) | **Only** `~/.codex/config.toml` | Ignores project-scoped config |
+| **Codex CLI** (`codex` in terminal) | `~/.codex/config.toml` + `<project>/.codex/config.toml` if trusted | ✅ **Yes — use this** |
+| **Codex IDE extension** (VS Code, JetBrains) | Same files as CLI — config is shared | ✅ Yes |
+| **Codex Desktop** (standalone app) | **Only** `~/.codex/config.toml` | ❌ **No** — see §1a |
 
 OpenAI's docs state the CLI and IDE extension share configuration. Desktop is the odd
 one out: [openai/codex#13025](https://github.com/openai/codex/issues/13025) reports that
@@ -25,6 +25,99 @@ Codex Desktop silently ignores any `.codex/config.toml` inside a project root.
 
 **Implication:** register RvtMcp in **user scope**. Project-scope wiring is invisible to
 Desktop, and a single user-scope entry covers all three surfaces.
+
+---
+
+## 1a. Codex Desktop cannot reach this server (verified 2026-09-15)
+
+**Use the Codex CLI, not Codex Desktop.** This is not a configuration mistake and no
+amount of config or permission work fixes it.
+
+Codex Desktop on Windows ships as a **Microsoft Store MSIX package**
+(`OpenAI.Codex_..._x64`, installed under `C:\Program Files\WindowsApps\`). Windows runs
+MSIX packages inside an **AppContainer**, always — it is not a Codex setting you can
+turn off.
+
+AppContainer access is **capability-gated, not ACL-gated**. A path outside the package's
+capability set is invisible to the sandboxed process even when NTFS permissions allow
+it. `rvt-mcp.exe` lives in `%LOCALAPPDATA%\RvtMcp\...`, outside that set.
+
+### Symptom
+
+`codex doctor` reports something like:
+
+```
+The configured Revit MCP executable, rvt-mcp.exe, wasn't found at its configured path.
+```
+
+…while the file is demonstrably present and the path in `config.toml` is correct.
+
+### What does NOT fix it
+
+Verified on a real install, all ineffective:
+
+- Granting `CodexSandboxUsers` **ReadAndExecute** on the exe and every parent folder.
+  It was already granted. Doctor still reported not found.
+- Granting **Modify** on a redirect directory and setting
+  `DOTNET_BUNDLE_EXTRACT_BASE_DIR`. `rvt-mcp.exe` is a .NET single-file bundle but
+  loads managed assemblies in place — it never extracts, so there is nothing to
+  redirect.
+- Correcting the path. The path was already right.
+
+A clue that confirms the mechanism: inspect the ACL on the RvtMcp folder and you will
+find an AppContainer SID of the form `S-1-15-2-…`. That is the Codex package identity.
+
+### What works
+
+The Codex **CLI** is a plain executable installed outside the MSIX package, so it runs
+as you with normal filesystem access:
+
+```
+%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe
+```
+
+Launch it from an **already-open terminal** — PowerShell or Windows Terminal. Pasting
+that path into the Win+R Run box will appear to do nothing, because it is a console
+application and Run gives it no console to attach to.
+
+Verify registration without starting a session:
+
+```powershell
+& "$env:LOCALAPPDATA\OpenAI\Codex\bin\<hash>\codex.exe" mcp get rvt-mcp
+```
+
+Expected:
+
+```
+rvt-mcp
+  enabled: true
+  transport: stdio
+  command: C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe
+  startup_timeout_sec: 30
+  tool_timeout_sec: 120
+```
+
+`Auth: Unsupported` in `codex mcp list` is normal and not an error — stdio servers do
+not use OAuth, and Codex's own bundled servers report the same.
+
+### Put the CLI on PATH
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  'PATH',
+  $env:PATH + ';' + "$env:LOCALAPPDATA\OpenAI\Codex\bin\<hash>",
+  'User')
+```
+
+Takes effect in new terminals. The `<hash>` folder changes when Codex updates, so this
+needs redoing after a version bump. Find the current one with:
+
+```powershell
+Get-ChildItem "$env:LOCALAPPDATA\OpenAI\Codex\bin" -Recurse -Filter codex.exe |
+  Select-Object -ExpandProperty FullName
+```
+
+---
 
 ### Config file path
 
