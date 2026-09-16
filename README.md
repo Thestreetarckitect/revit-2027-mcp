@@ -3,7 +3,7 @@
 <img src="https://img.shields.io/badge/Revit-2027-0070AD?style=for-the-badge&logo=autodesk&logoColor=white"/>
 <img src="https://img.shields.io/badge/Claude-MCP-D97757?style=for-the-badge&logo=anthropic&logoColor=white"/>
 <img src="https://img.shields.io/badge/Codex_CLI-GPT--6_Astra-000000?style=for-the-badge&logo=openai&logoColor=white"/>
-<img src="https://img.shields.io/badge/Tools-150%2B-7B2D8B?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Tools-216-7B2D8B?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Version-0.5.0-2EA043?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows&logoColor=white"/>
 
@@ -12,7 +12,7 @@
 # Revit 2027 MCP
 
 **MCP integration for Autodesk Revit 2027.**  
-Exposes 150+ Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working with Codex CLI running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
+Exposes 216 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working with Codex CLI running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
 
 > *"Think of MCP like a USB-C port for AI — one standard that connects to anything, Claude or Codex included."*
 
@@ -26,7 +26,7 @@ Exposes 150+ Revit API tools over the Model Context Protocol — query, create, 
 |---|---------|-------------|
 | 🏗️ | **Architecture** | How Claude connects to Revit via MCP |
 | ⚙️ | **Requirements & Install** | Prerequisites and one-command setup |
-| 🔧 | **150+ Tools** | Full capability reference by category |
+| 🔧 | **216 Tools** | Full capability reference by category |
 | ✅ | **What Claude Can Do** | Read, analyze, modify, automate |
 | ⚠️ | **Known Limits** | Constraints to understand before you start |
 | 💬 | **Prompt Strategies** | Templates, role-setting, cheat sheet |
@@ -137,54 +137,98 @@ for stdio servers, not an error.)
 
 ---
 
-## 🔧 150+ Available Tools
+## 🔧 216 Available Tools
+
+Enumerated live from `rvt-mcp.exe` v0.5.0 via an MCP `tools/list` handshake.
 
 <details>
-<summary><strong>🔍 Query & Model Info</strong></summary>
+<summary><strong>🔍 Query & Model Info</strong> · 42</summary>
 
-`get_current_view_info` · `get_element_details` · `get_element_parameters` · `get_element_bounding_box` · `get_element_geometry` · `get_element_relationships` · `ai_element_filter` · `analyze_model_statistics` · `get_model_warnings_summary` · `get_selected_elements` · `get_family_instances` · `get_available_family_types` · `list_loaded_families` · `list_materials` · `list_rooms` · `list_sheets` · `list_schedules` · `list_views` · `list_phases` · `list_worksets` · `get_current_target`
+`ai_element_filter` · `analyze_geometry_complexity` · `analyze_model_statistics` · `analyze_usage_patterns` · `compute_element_area` · `compute_element_volume` · `compute_room_finishes` · `delete_saved_selection` · `detect_firm_profile` · `detect_system_elements` · `find_elements_in_volume` · `find_overlapping_elements` · `get_assembly_members` · `get_available_family_types` · `get_current_target` · `get_current_view_info` · `get_element_bounding_box` · `get_element_centroid` · `get_element_details` · `get_element_geometry` · `get_element_parameters` · `get_element_relationships` · `get_family_instances` · `get_group_members` · `get_model_warnings_summary` · `get_selected_elements` · `get_type_parameters` · `list_assemblies` · `list_available_targets` · `list_groups` · `list_phases` · `list_saved_selections` · `list_worksets` · `load_selection` · `measure_distance_between_elements` · `project_point_onto_face` · `raycast_from_point` · `save_selection` · `select_elements` · `show_element_in_view` · `show_message` · `switch_target`
 
 </details>
 
 <details>
-<summary><strong>✏️ Create Elements</strong></summary>
+<summary><strong>✏️ Create Elements</strong> · 39</summary>
 
-`create_wall` · `create_floor` · `create_room` · `create_level` · `create_grid` · `create_view` · `create_sheet` · `create_schedule` · `create_dimensions` · `create_text_note` · `create_detail_line` · `create_structural_column` · `create_structural_beam` · `create_structural_wall` · `create_foundation_isolated` · `create_foundation_wall` · `create_rebar_set` · `create_rebar_stirrup` · `create_duct` · `create_pipe` · `create_cable_tray` · `create_conduit` · `create_air_terminal` · `create_lighting_fixture` · `create_material` · `create_revision`
-
-</details>
-
-<details>
-<summary><strong>🔄 Modify & Automate</strong></summary>
-
-`assign_material_to_element` · `apply_view_template` · `override_element_graphics` · `set_parameter_value_by_guid` · `set_view_scale` · `set_view_crop` · `set_view_phase` · `set_category_visibility` · `set_element_phase` · `rename_family_type` · `duplicate_family_type` · `replace_family_type` · `renumber_sheets` · `batch_execute` · `send_code_to_revit`
+`audit_families` · `auto_create_rooms_from_walls` · `create_air_terminal` · `create_area` · `create_cable_tray` · `create_conduit` · `create_detail_line` · `create_dimensions` · `create_duct` · `create_filled_region` · `create_foundation_isolated` · `create_foundation_wall` · `create_grid` · `create_level` · `create_lighting_fixture` · `create_line_based_element` · `create_mep_fitting` · `create_pipe` · `create_point_based_element` · `create_rebar_set` · `create_rebar_stirrup` · `create_room` · `create_room_separator` · `create_space` · `create_structural_beam` · `create_structural_column` · `create_structural_wall` · `create_surface_based_element` · `create_text_note` · `duplicate_family_type` · `export_family_to_path` · `import_cad_to_view` · `list_family_types_in_family` · `list_linked_cad` · `list_loaded_families` · `load_family_from_path` · `rename_family_type` · `replace_family_type` · `unload_family`
 
 </details>
 
 <details>
-<summary><strong>📤 Export</strong></summary>
+<summary><strong>🏷️ Tagging & Annotation</strong> · 11</summary>
 
-`export_pdf` · `export_dwg` · `export_ifc` · `export_nwc` · `export_dwf` · `export_fbx` · `export_gbxml` · `export_dgn` · `export_image` · `export_schedule_csv` · `export_elements_data` · `export_room_data` · `batch_export_sheets`
-
-</details>
-
-<details>
-<summary><strong>🔎 Clash & QC</strong></summary>
-
-`clash_detection` · `find_overlapping_elements` · `find_elements_in_volume` · `find_untagged_elements` · `find_undimensioned_elements` · `find_mep_disconnects` · `get_model_warnings_summary` · `audit_families` · `purge_unused`
+`apply_keynote_to_element` · `find_undimensioned_elements` · `find_untagged_elements` · `list_keynotes` · `tag_all_areas` · `tag_all_by_category` · `tag_all_rooms` · `tag_all_walls` · `tag_elements` · `tag_structural_framing` · `wipe_empty_tags`
 
 </details>
 
 <details>
-<summary><strong>📐 MEP & Structural</strong></summary>
+<summary><strong>📋 Schedules, Sheets & Views</strong> · 50</summary>
 
-`analyze_mep_network` · `connect_mep_elements` · `get_mep_element_connectors` · `get_panel_schedule` · `list_mep_systems` · `get_system_inventory` · `get_structural_loads` · `set_structural_load` · `analyze_structural_connections`
+`activate_view` · `add_schedule_field` · `analyze_sheet_layout` · `analyze_view_naming_patterns` · `apply_filter_to_view` · `apply_schedule_filter_sort` · `apply_view_template` · `assign_revision_to_sheet` · `batch_export_sheets` · `capture_view_image` · `create_callout_view` · `create_placeholder_sheet` · `create_revision` · `create_schedule` · `create_sheet` · `create_view` · `create_view_filter` · `create_view_sheet_set` · `create_view_template_from_view` · `delete_view_template` · `duplicate_sheet` · `duplicate_view_template` · `export_schedule_csv` · `find_schedule_elements` · `get_panel_schedule` · `get_print_settings` · `get_schedule_data` · `get_schedule_definition` · `get_schedule_formulas` · `get_titleblock_parameters` · `get_view_visibility` · `list_revisions` · `list_schedules` · `list_sheets` · `list_titleblocks` · `list_view_filters` · `list_view_templates` · `place_schedule_on_sheet` · `place_view_on_sheet` · `remove_filter_from_view` · `renumber_sheets` · `set_titleblock_parameters` · `set_view_crop` · `set_view_phase` · `set_view_scale` · `suggest_view_name_corrections` · `update_schedule_field` · `workflow_clash_review` · `workflow_sheet_set` · `workflow_view_cleanup`
 
 </details>
 
 <details>
-<summary><strong>🧰 Workflows & Baked Tools</strong></summary>
+<summary><strong>🎛️ Parameters & Materials</strong> · 20</summary>
 
-`workflow_clash_review` · `workflow_model_audit` · `workflow_sheet_set` · `workflow_view_cleanup` · `workflow_room_documentation` · `workflow_naming_normalization` · `workflow_takeoff_report` · `workflow_data_roundtrip` · `list_baked_tools` · `run_baked_tool`
+`assign_material_to_element` · `bind_shared_parameter` · `create_material` · `create_project_parameter` · `create_shared_parameter` · `duplicate_material` · `export_shared_parameter_file` · `get_material_properties` · `get_material_quantities` · `get_material_takeoff` · `list_materials` · `list_project_parameter_bindings` · `list_project_parameters` · `list_shared_parameters` · `remove_parameter_binding` · `set_material_appearance` · `set_material_identity` · `set_material_structural_asset` · `set_material_thermal_asset` · `set_parameter_value_by_guid`
+
+</details>
+
+<details>
+<summary><strong>🔄 Modify & Automate</strong> · 12</summary>
+
+`batch_execute` · `clear_element_overrides` · `override_element_graphics` · `purge_unused` · `send_code_to_revit` · `set_category_visibility` · `set_element_phase` · `set_filter_overrides` · `set_project_base_point` · `set_project_info` · `set_structural_load` · `set_system_classification`
+
+</details>
+
+<details>
+<summary><strong>📤 Export & Capture</strong> · 11</summary>
+
+`export_dgn` · `export_dwf` · `export_dwg` · `export_elements_data` · `export_fbx` · `export_gbxml` · `export_ifc` · `export_image` · `export_nwc` · `export_pdf` · `export_room_data`
+
+</details>
+
+<details>
+<summary><strong>🔎 Clash & QC</strong> · 2</summary>
+
+`clash_detection` · `find_mep_disconnects`
+
+</details>
+
+<details>
+<summary><strong>📐 MEP & Structural</strong> · 8</summary>
+
+`analyze_mep_network` · `analyze_structural_connections` · `connect_mep_elements` · `get_mep_element_connectors` · `get_structural_loads` · `get_system_inventory` · `list_mep_systems` · `list_rebar`
+
+</details>
+
+<details>
+<summary><strong>🔗 Links & Coordination</strong> · 7</summary>
+
+`acquire_coordinates_from_link` · `get_link_elements` · `link_revit_model` · `list_linked_models` · `publish_coordinates_to_link` · `reload_link` · `unload_link`
+
+</details>
+
+<details>
+<summary><strong>🏠 Rooms, Areas & Spaces</strong> · 5</summary>
+
+`get_room_boundaries` · `get_room_openings` · `list_areas` · `list_rooms` · `workflow_room_documentation`
+
+</details>
+
+<details>
+<summary><strong>🧰 Workflows & Baked Tools</strong> · 6</summary>
+
+`list_baked_tools` · `run_baked_tool` · `workflow_data_roundtrip` · `workflow_model_audit` · `workflow_naming_normalization` · `workflow_takeoff_report`
+
+</details>
+
+<details>
+<summary><strong>🧩 Other</strong> · 3</summary>
+
+`create_group_from_elements` · `get_schedulable_fields` · `list_export_settings`
 
 </details>
 
@@ -454,7 +498,7 @@ Codex is a trademark of OpenAI. This project is not affiliated with any of them.
 
 <div align="center">
 
-**Server:** `0.5.0` &nbsp;|&nbsp; **Addin:** `RvtMcp.R27` (Revit 2027 API) &nbsp;|&nbsp; **Tools:** 150+ &nbsp;|&nbsp; **Clients:** Claude, Codex CLI (GPT-6 Astra)
+**Server:** `0.5.0` &nbsp;|&nbsp; **Addin:** `RvtMcp.R27` (Revit 2027 API) &nbsp;|&nbsp; **Tools:** 216 &nbsp;|&nbsp; **Clients:** Claude, Codex CLI (GPT-6 Astra)
 
 *MCP integration for Autodesk Revit 2027 — Claude and Codex CLI*
 
