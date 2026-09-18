@@ -100,7 +100,7 @@ Add to `~/.claude.json` under `mcpServers`:
 ### Codex (GPT-6 Astra)
 
 ✅ **Verified working in the Codex app (2026-09-18)** — connected to a live Revit 2027
-model through `Documents\Codex\rvt-mcp\rvt-mcp.exe`. No CLI needed. Two steps:
+model through `Documents\Codex\rvt-mcp\rvt-mcp.exe`. Two steps:
 
 1. **Download and install.** Clone or download this repo and run `.\install.ps1`. It
    drops a Codex copy of the server at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.

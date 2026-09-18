@@ -1,6 +1,6 @@
 # MCP Configuration for OpenAI Codex
 
-Wiring `rvt-mcp.exe` into OpenAI's Codex clients — CLI, IDE extension and Desktop.
+Wiring `rvt-mcp.exe` into the OpenAI Codex app.
 
 For Anthropic clients see [`mcp-config-claude.md`](./mcp-config-claude.md).
 
@@ -11,26 +11,18 @@ For Anthropic clients see [`mcp-config-claude.md`](./mcp-config-claude.md).
 
 ---
 
-## 1. Three Codex surfaces, one config file (mostly)
+## 1. One config file
 
-| Client | Reads | Works with RvtMcp? |
-|---|---|---|
-| **Codex Desktop** (standalone app) | **Only** `~/.codex/config.toml` | ✅ **Yes — use the `Documents\Codex\` copy**, see §1a |
-| **Codex CLI** (`codex` in terminal) | `~/.codex/config.toml` + `<project>/.codex/config.toml` if trusted | ✅ Yes (optional) |
-| **Codex IDE extension** (VS Code, JetBrains) | Same files as CLI — config is shared | ✅ Yes |
-
-OpenAI's docs state the CLI and IDE extension share configuration. Desktop is the odd
-one out: [openai/codex#13025](https://github.com/openai/codex/issues/13025) reports that
-Codex Desktop silently ignores any `.codex/config.toml` inside a project root.
-
-**Implication:** register RvtMcp in **user scope**. Project-scope wiring is invisible to
-Desktop, and a single user-scope entry covers all three surfaces.
+The Codex app reads **only** the user-scope `~/.codex/config.toml`.
+[openai/codex#13025](https://github.com/openai/codex/issues/13025) reports that it
+silently ignores any `.codex/config.toml` inside a project root, so register RvtMcp in
+**user scope**.
 
 ---
 
 ## 1a. Codex Desktop: the server lives under `Documents\Codex\` (working 2026-09-18)
 
-**Codex Desktop works out of the box — no CLI needed — once `rvt-mcp.exe` lives inside
+**Codex Desktop works out of the box once `rvt-mcp.exe` lives inside
 `%USERPROFILE%\Documents\Codex\`.** It cannot launch the server from the default
 `%LOCALAPPDATA%\RvtMcp\...` install path. No config or permission change fixes that —
 the file's location does.
@@ -134,7 +126,7 @@ args = []
 command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
 args = []
 
-startup_timeout_sec = 30    # Revit addin handshake is slower than a plain CLI server
+startup_timeout_sec = 30    # Revit addin handshake is slower than a typical MCP server
 tool_timeout_sec = 120      # large schedules, takeoffs and clash runs exceed the 60s default
 
 # Ask before anything that executes arbitrary code in the model
@@ -186,30 +178,8 @@ default_tools_approval_mode = "approve"
 
 ---
 
-## 4. Optional: register from the CLI
 
-```bash
-codex mcp add rvt-mcp -- "C:\\Users\\<user>\\Documents\\Codex\\rvt-mcp\\rvt-mcp.exe"
-```
-
-The `--` separates Codex's own flags from the server command, same convention as
-`claude mcp add`.
-
-Other commands:
-
-```bash
-codex mcp list             # show configured servers
-codex mcp remove rvt-mcp   # delete the entry
-```
-
-Inside a session, `/mcp` shows connection status and the tool list.
-
-The CLI rewrites `~/.codex/config.toml`, so Codex Desktop picks up the entry on its
-next launch.
-
----
-
-## 5. Verify
+## 4. Verify
 
 1. Open Revit 2027. The addin loads on startup and writes `revit-2027.json` with a
    fresh pipe name and auth token.
@@ -222,7 +192,7 @@ next launch.
 
 ---
 
-## 6. Do not run two clients at once
+## 5. Do not run two clients at once
 
 Each MCP client spawns its **own** `rvt-mcp.exe` process, and both would connect to the
 same named pipe on the same Revit instance. Revit's API is not built for concurrent
@@ -233,15 +203,14 @@ Run Claude or Codex — not both. Close one before starting the other.
 
 ---
 
-## 7. Claude vs Codex cheat sheet
+## 6. Claude vs Codex cheat sheet
 
-| Aspect | Claude Code / Desktop | Codex CLI / IDE / Desktop |
+| Aspect | Claude Code / Desktop | Codex |
 |---|---|---|
 | Config format | JSON | **TOML** |
 | Top-level key | `mcpServers` | `mcp_servers` |
 | User-scope path (Windows) | `%USERPROFILE%\.claude.json` | `%USERPROFILE%\.codex\config.toml` |
-| Project-scope file | `.mcp.json` at repo root | `.codex/config.toml` + `trust_level = "trusted"` (not Desktop) |
-| Add via CLI | `claude mcp add` | `codex mcp add` |
+| Project-scope file | `.mcp.json` at repo root | `.codex/config.toml` — ignored by the Codex app; use user scope |
 | Per-server timeout | Global `MCP_TIMEOUT` env | `startup_timeout_sec`, `tool_timeout_sec` |
 | Tool filtering | Permission allowlist patterns | `enabled_tools`, `disabled_tools` |
 | Per-tool approval | Permission rules in settings | `default_tools_approval_mode` + per-tool override |
@@ -249,11 +218,10 @@ Run Claude or Codex — not both. Close one before starting the other.
 
 ---
 
-## 8. Sources
+## 7. Sources
 
 - [Model Context Protocol — Codex](https://developers.openai.com/codex/mcp)
 - [Configuration Reference — Codex](https://developers.openai.com/codex/config-reference)
-- [Codex CLI reference](https://developers.openai.com/codex/cli/reference)
 - [openai/codex#13025 — Desktop ignores project `.codex/config.toml`](https://github.com/openai/codex/issues/13025)
 
 **Schema verified 2026-09-15** against a live Codex Desktop install (app version
@@ -266,24 +234,3 @@ Notably Codex sets `startup_timeout_sec = 120` on its own server, so raising it 
 
 OpenAI has changed this schema before. Re-check against current Codex docs if something
 stops working.
-
----
-
-## Appendix: the `codex` CLI may not be on PATH
-
-Codex Desktop installs the CLI binary but does not always add it to PATH. If
-`codex` is not found, it lives at:
-
-```
-%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe
-```
-
-The `<hash>` segment changes between versions. Find the current one with:
-
-```powershell
-Get-ChildItem "$env:LOCALAPPDATA\OpenAI\Codex\bin" -Recurse -Filter codex.exe |
-  Select-Object -ExpandProperty FullName
-```
-
-Editing `~/.codex/config.toml` by hand works regardless and is the more reliable
-route on Windows.
