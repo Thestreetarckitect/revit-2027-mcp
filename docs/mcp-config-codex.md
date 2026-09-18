@@ -50,8 +50,9 @@ startup_timeout_sec = 30
 tool_timeout_sec = 120
 ```
 
-Verified on a live install: the copy under `Documents\Codex\` is byte-identical to the
-`%LOCALAPPDATA%` one, and Desktop connects to Revit through it. Re-run `install.ps1`
+✅ **Verified 2026-09-18** on a live install: Codex Desktop connects to Revit 2027 through
+`%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`, a byte-identical copy of the
+`%LOCALAPPDATA%` one. Re-run `install.ps1`
 after every server upgrade so the Codex copy stays current.
 
 ### Why the default path fails
