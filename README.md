@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/Revit-2027-0070AD?style=for-the-badge&logo=autodesk&logoColor=white"/>
 <img src="https://img.shields.io/badge/Claude-MCP-D97757?style=for-the-badge&logo=anthropic&logoColor=white"/>
-<img src="https://img.shields.io/badge/Codex_CLI-GPT--6_Astra-000000?style=for-the-badge&logo=openai&logoColor=white"/>
+<img src="https://img.shields.io/badge/Codex-GPT--6_Astra-000000?style=for-the-badge&logo=openai&logoColor=white"/>
 <img src="https://img.shields.io/badge/Tools-216-7B2D8B?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Version-0.5.0-2EA043?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows&logoColor=white"/>
@@ -12,7 +12,7 @@
 # Revit 2027 MCP
 
 **MCP integration for Autodesk Revit 2027.**  
-Exposes 216 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working with Codex CLI running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
+Exposes 216 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working inside Codex running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
 
 > *"Think of MCP like a USB-C port for AI — one standard that connects to anything, Claude or Codex included."*
 
@@ -38,7 +38,7 @@ Exposes 216 Revit API tools over the Model Context Protocol — query, create, m
 ## 🏗️ Architecture
 
 ```
-AI client (MCP)  —  Claude Desktop / Claude Code, or Codex CLI (GPT-6 Astra)
+AI client (MCP)  —  Claude Desktop / Claude Code, or Codex (GPT-6 Astra)
       ↕  stdio
 rvt-mcp.exe  (MCP server — .NET 8 self-contained)
       ↕  named pipe + auth token
@@ -59,7 +59,7 @@ RvtMcp.Plugin.dll  (Revit addin)
 |-------------|---------|
 | **Revit** | Autodesk Revit 2027 |
 | **OS** | Windows 10 / 11 x64 |
-| **MCP client** | Claude Desktop or Claude Code with MCP support, **or** Codex CLI with an `mcp_servers` entry (tested running GPT-6 Astra) |
+| **MCP client** | Claude Desktop or Claude Code with MCP support, **or** Codex with an `mcp_servers` entry (tested running GPT-6 Astra) |
 
 ---
 
@@ -75,6 +75,7 @@ Deploys automatically — no admin required:
 |-------------|----------|
 | `%APPDATA%\Autodesk\Revit\Addins\2027\RvtMcp\` | Addin manifest + DLL |
 | `%LOCALAPPDATA%\RvtMcp\rvt\server\0.5.0\` | MCP server exe |
+| `%USERPROFILE%\Documents\Codex\rvt-mcp\` | MCP server exe (copy for Codex) |
 
 ---
 
@@ -96,38 +97,34 @@ Add to `~/.claude.json` under `mcpServers`:
 2. In Claude, run: `get current view info` — should return Revit model state
 3. Check `%LOCALAPPDATA%\RvtMcp\revit-mcp.log` if something fails
 
-### Codex CLI (GPT-6 Astra)
+### Codex (GPT-6 Astra)
 
-> ⚠️ **Codex CLI works. Codex Desktop does not.** Desktop ships as a Microsoft Store
-> MSIX package and runs inside a Windows AppContainer, which cannot see `rvt-mcp.exe`
-> in `%LOCALAPPDATA%` regardless of file permissions. `codex doctor` reports the
-> executable as "not found at its configured path" while the file is demonstrably
-> there. Granting ACLs does not help — AppContainer access is capability-gated, not
-> ACL-gated. Full write-up in
-> [docs/mcp-config-codex.md §1a](docs/mcp-config-codex.md).
->
-> The CLI is a plain executable outside the package and works normally. Find it at
-> `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`, and launch it from an already-open
-> terminal — it is a console app, so the Win+R Run box will appear to do nothing.
+Works in the Codex app — no CLI needed. Two steps:
 
-Point Codex at the same server executable, either the installed copy above or a local build path, then launch a normal Codex session:
-
-```powershell
-codex -c 'mcp_servers.rvt-mcp.command="C:/Users/<user>/AppData/Local/RvtMcp/rvt/server/0.5.0/rvt-mcp.exe"'
-```
-
-That flag is per-session. To register it permanently, add to `%USERPROFILE%\.codex\config.toml`:
+1. **Download and install.** Clone or download this repo and run `.\install.ps1`. It
+   drops a Codex copy of the server at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.
+2. **Register it.** Add to `%USERPROFILE%\.codex\config.toml`, then restart Codex:
 
 ```toml
 [mcp_servers.rvt-mcp]
-command = 'C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe'
+command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
 args = []
 startup_timeout_sec = 30
 tool_timeout_sec = 120
+
+# Ask before anything that executes arbitrary code in the model
+[mcp_servers.rvt-mcp.tools.revit_send_code_to_revit]
+approval_mode = "prompt"
+
+[mcp_servers.rvt-mcp.tools.revit_batch_execute]
+approval_mode = "prompt"
 ```
 
-Confirm with `codex mcp get rvt-mcp`. (`Auth: Unsupported` in `codex mcp list` is normal
-for stdio servers, not an error.)
+> **Why the separate copy?** The Codex app runs inside a Windows AppContainer and cannot
+> launch executables from `%LOCALAPPDATA%` — it reports `rvt-mcp.exe` "not found" even
+> though the file is there. It can launch them from `Documents\Codex\`, so the installer
+> puts the same binary there. Re-run `install.ps1` after upgrading. Details in
+> [docs/mcp-config-codex.md §1a](docs/mcp-config-codex.md).
 
 **Verify connection:**
 1. Open Revit 2027 — addin loads automatically on startup
@@ -263,7 +260,7 @@ Enumerated live from `rvt-mcp.exe` v0.5.0 via an MCP `tools/list` handshake.
 | **No visual access** | The AI client cannot see 3D views or screenshots — interaction is purely data-driven |
 | **Complex geometry** | Free-form surfaces and intricate solid operations often fail |
 | **Code review required** | AI-generated C# code must be reviewed before running on production models |
-| **Local MCP client required** | Needs a client with MCP support — Claude Desktop, Claude Code, or Codex CLI. Claude's web version does not support MCP |
+| **Local MCP client required** | Needs a client with MCP support — Claude Desktop, Claude Code, or Codex. Claude's web version does not support MCP |
 | **Revit API boundaries** | Some read-only contexts block writes; the client is bound by the same rules as any plugin |
 | **Prompt precision** | Vague prompts lead to wrong tool calls — specific prompts dramatically improve accuracy |
 | **Tool count drift** | The tool count a client reports can lag this README if you're running a newer local build than the tagged release |
@@ -498,8 +495,8 @@ Codex is a trademark of OpenAI. This project is not affiliated with any of them.
 
 <div align="center">
 
-**Server:** `0.5.0` &nbsp;|&nbsp; **Addin:** `RvtMcp.R27` (Revit 2027 API) &nbsp;|&nbsp; **Tools:** 216 &nbsp;|&nbsp; **Clients:** Claude, Codex CLI (GPT-6 Astra)
+**Server:** `0.5.0` &nbsp;|&nbsp; **Addin:** `RvtMcp.R27` (Revit 2027 API) &nbsp;|&nbsp; **Tools:** 216 &nbsp;|&nbsp; **Clients:** Claude, Codex (GPT-6 Astra)
 
-*MCP integration for Autodesk Revit 2027 — Claude and Codex CLI*
+*MCP integration for Autodesk Revit 2027 — Claude and Codex*
 
 </div>

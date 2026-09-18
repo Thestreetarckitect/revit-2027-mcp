@@ -19,8 +19,17 @@ Copy-Item "$scriptDir\server\rvt-mcp.exe" "$serverTarget\rvt-mcp.exe" -Force
 Copy-Item "$scriptDir\server\RvtMcp.Server.pdb" "$serverTarget\RvtMcp.Server.pdb" -Force
 Write-Host "  Server deployed to $serverTarget"
 
+# Codex Desktop runs in an AppContainer and cannot launch executables from
+# %LOCALAPPDATA%. It can launch them from Documents\Codex, so drop a copy there.
+$codexTarget = "$env:USERPROFILE\Documents\Codex\rvt-mcp"
+Write-Host "Installing MCP server for Codex..."
+New-Item -ItemType Directory -Force $codexTarget | Out-Null
+Copy-Item "$scriptDir\server\rvt-mcp.exe" "$codexTarget\rvt-mcp.exe" -Force
+Write-Host "  Codex server deployed to $codexTarget"
+
 $exePath  = Join-Path $serverTarget 'rvt-mcp.exe'
 $exeJson  = $exePath.Replace('\', '\\')
+$codexExe = Join-Path $codexTarget 'rvt-mcp.exe'
 
 Write-Host ""
 Write-Host "Done. The server speaks stdio, so any MCP client can use it."
@@ -36,12 +45,12 @@ Write-Host ""
 Write-Host "--- OpenAI Codex  ->  %USERPROFILE%\.codex\config.toml ---" -ForegroundColor Cyan
 Write-Host ""
 Write-Host '  [mcp_servers.rvt-mcp]'
-Write-Host "  command = '$exePath'"
+Write-Host "  command = '$codexExe'"
 Write-Host '  args = []'
 Write-Host '  startup_timeout_sec = 30'
 Write-Host '  tool_timeout_sec = 120'
 Write-Host ""
-Write-Host "  or run:  codex mcp add rvt-mcp -- `"$exeJson`""
+Write-Host "  Then restart Codex."
 Write-Host ""
 Write-Host "Run one client at a time - two clients cannot drive the same Revit instance." -ForegroundColor Yellow
 Write-Host "Then open Revit 2027 and verify the RvtMcp addin loads."

@@ -15,9 +15,9 @@ For Anthropic clients see [`mcp-config-claude.md`](./mcp-config-claude.md).
 
 | Client | Reads | Works with RvtMcp? |
 |---|---|---|
-| **Codex CLI** (`codex` in terminal) | `~/.codex/config.toml` + `<project>/.codex/config.toml` if trusted | ✅ **Yes — use this** |
+| **Codex Desktop** (standalone app) | **Only** `~/.codex/config.toml` | ✅ **Yes — use the `Documents\Codex\` copy**, see §1a |
+| **Codex CLI** (`codex` in terminal) | `~/.codex/config.toml` + `<project>/.codex/config.toml` if trusted | ✅ Yes (optional) |
 | **Codex IDE extension** (VS Code, JetBrains) | Same files as CLI — config is shared | ✅ Yes |
-| **Codex Desktop** (standalone app) | **Only** `~/.codex/config.toml` | ❌ **No** — see §1a |
 
 OpenAI's docs state the CLI and IDE extension share configuration. Desktop is the odd
 one out: [openai/codex#13025](https://github.com/openai/codex/issues/13025) reports that
@@ -28,10 +28,33 @@ Desktop, and a single user-scope entry covers all three surfaces.
 
 ---
 
-## 1a. Codex Desktop cannot reach this server (verified 2026-09-15)
+## 1a. Codex Desktop: the server lives under `Documents\Codex\` (working 2026-09-18)
 
-**Use the Codex CLI, not Codex Desktop.** This is not a configuration mistake and no
-amount of config or permission work fixes it.
+**Codex Desktop works out of the box — no CLI needed — once `rvt-mcp.exe` lives inside
+`%USERPROFILE%\Documents\Codex\`.** It cannot launch the server from the default
+`%LOCALAPPDATA%\RvtMcp\...` install path. No config or permission change fixes that —
+the file's location does.
+
+### Setup
+
+Run `install.ps1`. Along with the normal install it drops a copy of the server — same
+binary, no rebuild — at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.
+
+Point `~/.codex/config.toml` at that copy and restart Codex Desktop:
+
+```toml
+[mcp_servers.rvt-mcp]
+command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
+args = []
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+```
+
+Verified on a live install: the copy under `Documents\Codex\` is byte-identical to the
+`%LOCALAPPDATA%` one, and Desktop connects to Revit through it. Re-run `install.ps1`
+after every server upgrade so the Codex copy stays current.
+
+### Why the default path fails
 
 Codex Desktop on Windows ships as a **Microsoft Store MSIX package**
 (`OpenAI.Codex_..._x64`, installed under `C:\Program Files\WindowsApps\`). Windows runs
@@ -67,56 +90,6 @@ Verified on a real install, all ineffective:
 A clue that confirms the mechanism: inspect the ACL on the RvtMcp folder and you will
 find an AppContainer SID of the form `S-1-15-2-…`. That is the Codex package identity.
 
-### What works
-
-The Codex **CLI** is a plain executable installed outside the MSIX package, so it runs
-as you with normal filesystem access:
-
-```
-%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe
-```
-
-Launch it from an **already-open terminal** — PowerShell or Windows Terminal. Pasting
-that path into the Win+R Run box will appear to do nothing, because it is a console
-application and Run gives it no console to attach to.
-
-Verify registration without starting a session:
-
-```powershell
-& "$env:LOCALAPPDATA\OpenAI\Codex\bin\<hash>\codex.exe" mcp get rvt-mcp
-```
-
-Expected:
-
-```
-rvt-mcp
-  enabled: true
-  transport: stdio
-  command: C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe
-  startup_timeout_sec: 30
-  tool_timeout_sec: 120
-```
-
-`Auth: Unsupported` in `codex mcp list` is normal and not an error — stdio servers do
-not use OAuth, and Codex's own bundled servers report the same.
-
-### Put the CLI on PATH
-
-```powershell
-[Environment]::SetEnvironmentVariable(
-  'PATH',
-  $env:PATH + ';' + "$env:LOCALAPPDATA\OpenAI\Codex\bin\<hash>",
-  'User')
-```
-
-Takes effect in new terminals. The `<hash>` folder changes when Codex updates, so this
-needs redoing after a version bump. Find the current one with:
-
-```powershell
-Get-ChildItem "$env:LOCALAPPDATA\OpenAI\Codex\bin" -Recurse -Filter codex.exe |
-  Select-Object -ExpandProperty FullName
-```
-
 ---
 
 ### Config file path
@@ -140,7 +113,7 @@ where Claude uses `mcpServers` in camelCase.
 
 ```toml
 [mcp_servers.rvt-mcp]
-command = "C:\\Users\\<user>\\AppData\\Local\\RvtMcp\\rvt\\server\\0.5.0\\rvt-mcp.exe"
+command = "C:\\Users\\<user>\\Documents\\Codex\\rvt-mcp\\rvt-mcp.exe"
 args = []
 ```
 
@@ -149,7 +122,7 @@ with single quotes and single backslashes:
 
 ```toml
 [mcp_servers.rvt-mcp]
-command = 'C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe'
+command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
 args = []
 ```
 
@@ -157,7 +130,7 @@ args = []
 
 ```toml
 [mcp_servers.rvt-mcp]
-command = 'C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe'
+command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
 args = []
 
 startup_timeout_sec = 30    # Revit addin handshake is slower than a plain CLI server
@@ -180,7 +153,7 @@ Useful when pointing an agent at a live production model:
 
 ```toml
 [mcp_servers.rvt-mcp-readonly]
-command = 'C:\Users\<user>\AppData\Local\RvtMcp\rvt\server\0.5.0\rvt-mcp.exe'
+command = 'C:\Users\<user>\Documents\Codex\rvt-mcp\rvt-mcp.exe'
 args = []
 disabled_tools = [
   "revit_send_code_to_revit",
@@ -212,10 +185,10 @@ default_tools_approval_mode = "approve"
 
 ---
 
-## 4. Register from the CLI instead
+## 4. Optional: register from the CLI
 
 ```bash
-codex mcp add rvt-mcp -- "C:\\Users\\<user>\\AppData\\Local\\RvtMcp\\rvt\\server\\0.5.0\\rvt-mcp.exe"
+codex mcp add rvt-mcp -- "C:\\Users\\<user>\\Documents\\Codex\\rvt-mcp\\rvt-mcp.exe"
 ```
 
 The `--` separates Codex's own flags from the server command, same convention as
@@ -239,8 +212,8 @@ next launch.
 
 1. Open Revit 2027. The addin loads on startup and writes `revit-2027.json` with a
    fresh pipe name and auth token.
-2. `codex mcp list` — `rvt-mcp` should appear.
-3. Start Codex and run `/mcp` — the server should be connected with 150+ tools.
+2. Restart Codex after editing `config.toml`.
+3. Start Codex and run `/mcp` — the server should be connected with 216 tools.
 4. Ask: `get current view info`. A real response means the whole chain is live —
    Codex to server over stdio, server to addin over the named pipe, addin to the
    Revit API.
