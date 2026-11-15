@@ -1,0 +1,146 @@
+{
+  "name": "RvtMcp.Setup",
+  "version": "1.2.2",
+  "generatedAtUtc": "2026-11-02T10:35:52.9376459Z",
+  "commit": "6cfdfe5d084733bab03287cf021de1c563cb5346",
+  "dirty": false,
+  "platform": "win-x64",
+  "supportedRevitYears": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027
+  ],
+  "server": {
+    "command": "server/rvt-mcp.exe",
+    "selfContained": true,
+    "requiresDotnet": false
+  },
+  "plugins": [
+    {
+      "year": 2022,
+      "path": "plugins/RvtMcp.Plugin.R22.zip",
+      "sha256": "b44137ba4299edff9b07c305105e1e9c293fb34879125667fbf8a5158f5c9dc0",
+      "bytes": 9161878
+    },
+    {
+      "year": 2023,
+      "path": "plugins/RvtMcp.Plugin.R23.zip",
+      "sha256": "36bcd14434a058b8270cc9e117d38255238de51c6c37713d257f9f94204161b5",
+      "bytes": 9161850
+    },
+    {
+      "year": 2024,
+      "path": "plugins/RvtMcp.Plugin.R24.zip",
+      "sha256": "de87cc260c81cdd3163847c1d636b21ddbbff85003b873ccff56ae5562cb08cd",
+      "bytes": 9162125
+    },
+    {
+      "year": 2025,
+      "path": "plugins/RvtMcp.Plugin.R25.zip",
+      "sha256": "5bf85873da86a38ed9063a7224fe8bf2bf2ee53af5c441f5821af4978bd999a9",
+      "bytes": 7323867
+    },
+    {
+      "year": 2026,
+      "path": "plugins/RvtMcp.Plugin.R26.zip",
+      "sha256": "1634d909553b1e2f152a8f3b3dee216284fee6c8e2d27945cbc5c540fb1241aa",
+      "bytes": 7324155
+    },
+    {
+      "year": 2027,
+      "path": "plugins/RvtMcp.Plugin.R27.zip",
+      "sha256": "1eda07b98b3e12f4d5da532f4a0a82cdb4b3bd75dd10be5a15596cd8fe215111",
+      "bytes": 7325130
+    }
+  ],
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "4c68479dc5762177c3bbd480658382714add481bcdeae6082a6eb4692e1191c9",
+      "bytes": 25104
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "940bddf00e1e8714e75568a0267ad673c44297656b08bfcc01f0c4f998a24787",
+      "bytes": 93665
+    },
+    {
+      "path": "install.ps1",
+      "sha256": "0de317edbd988455fe82fb6914c77e65e7b7339293e91ee7185c96cced8fb28c",
+      "bytes": 72473
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R22.zip",
+      "sha256": "b44137ba4299edff9b07c305105e1e9c293fb34879125667fbf8a5158f5c9dc0",
+      "bytes": 9161878
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R23.zip",
+      "sha256": "36bcd14434a058b8270cc9e117d38255238de51c6c37713d257f9f94204161b5",
+      "bytes": 9161850
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R24.zip",
+      "sha256": "de87cc260c81cdd3163847c1d636b21ddbbff85003b873ccff56ae5562cb08cd",
+      "bytes": 9162125
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R25.zip",
+      "sha256": "5bf85873da86a38ed9063a7224fe8bf2bf2ee53af5c441f5821af4978bd999a9",
+      "bytes": 7323867
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R26.zip",
+      "sha256": "1634d909553b1e2f152a8f3b3dee216284fee6c8e2d27945cbc5c540fb1241aa",
+      "bytes": 7324155
+    },
+    {
+      "path": "plugins/RvtMcp.Plugin.R27.zip",
+      "sha256": "1eda07b98b3e12f4d5da532f4a0a82cdb4b3bd75dd10be5a15596cd8fe215111",
+      "bytes": 7325130
+    },
+    {
+      "path": "server/aspnetcorev2_inprocess.dll",
+      "sha256": "ee34b6502773db17be67b7e30e3692723b811bdcef8c0b357031a7c3392f458a",
+      "bytes": 383840
+    },
+    {
+      "path": "server/e_sqlite3.dll",
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e",
+      "bytes": 1978880
+    },
+    {
+      "path": "server/rvt-mcp.exe",
+      "sha256": "6664fa712f6ba4e12789c116f13a9084be856f355df609f5e43da01975760bb9",
+      "bytes": 98798603
+    },
+    {
+      "path": "server/RvtMcp.Server.pdb",
+      "sha256": "2d72e57819b304ddc1f310da1c0644b22d355ad877c3e8b73f6284fb4fee1ebf",
+      "bytes": 242300
+    },
+    {
+      "path": "server/RvtMcp.Server.staticwebassets.endpoints.json",
+      "sha256": "c1686417e8d5c31bba969f12b6f3d2b35e6609adb5ca42f212261a3a02771aac",
+      "bytes": 53
+    },
+    {
+      "path": "server/web.config",
+      "sha256": "e23cdbabcd94f8df9aa3ac856b24ad8528e1e0b2f40e50b4581530550c24c29e",
+      "bytes": 538
+    },
+    {
+      "path": "uninstall-all.ps1",
+      "sha256": "40fc44b3d07e3a19db2994f2007d49f28ef6c68ad6d022c8531ca55d33627e09",
+      "bytes": 12350
+    },
+    {
+      "path": "uninstall.ps1",
+      "sha256": "40fc44b3d07e3a19db2994f2007d49f28ef6c68ad6d022c8531ca55d33627e09",
+      "bytes": 12350
+    }
+  ]
+}
