@@ -1,4 +1,4 @@
-Revit MCP for 2025, 2026 and 2027
+TSA Revit 2025 - 2027 MCP
 Packaged distribution by TheStreetArckitect LLC
 
 This product includes software developed by the RvtMcp project.
@@ -27,6 +27,7 @@ Changes made in this distribution
   then copies the server to Documents\Codex\rvt-mcp for the Codex desktop app.
 - Added README.md and docs/ written for this distribution, including client
   configuration for Claude and Codex.
+- Added checksum verification (tools/verify.ps1, tools/verify.py), CI checks and SECURITY.md.
 - No modifications to upstream source code or to any file inside setup/.
 - Updated from v0.5.0 (Revit 2027 only) to v1.2.2.
 

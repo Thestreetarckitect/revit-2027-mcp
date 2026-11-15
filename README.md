@@ -9,9 +9,9 @@
 
 <br/><br/>
 
-# Revit MCP for 2025, 2026 and 2027
+# TSA Revit 2025 - 2027 MCP
 
-**MCP integration for Autodesk Revit 2025, 2026 and 2027.**  
+**TSA Revit 2025 - 2027 MCP by The Street Arckitect. MCP integration for Autodesk Revit 2025, 2026 and 2027.**  
 Exposes 242 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working inside Codex running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
 
 > *"Think of MCP like a USB-C port for AI — one standard that connects to anything, Claude or Codex included."*
@@ -65,11 +65,22 @@ RvtMcp.Plugin.dll  (Revit addin, one build per Revit year)
 
 ## 🚀 Quick Start
 
-Close Revit, then run:
+**1. Get the files.** Clone the repository or use **Code, Download ZIP** on GitHub. Extract the ZIP before you run anything.
 
 ```powershell
-.\install.ps1
+git clone https://github.com/Thestreetarckitect/TSA-Revit-2025-2027-MCP
+cd TSA-Revit-2025-2027-MCP
 ```
+
+**2. Close Revit, then run the installer.** It checks every file against its SHA-256 checksum first and stops if one fails.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+The `-ExecutionPolicy Bypass` flag applies to this one run only. It changes no system setting.
+
+To check the files yourself, run `.\tools\verify.ps1`. See [SECURITY.md](SECURITY.md).
 
 Deploys automatically. No admin rights needed:
 

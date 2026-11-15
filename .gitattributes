@@ -1,0 +1,9 @@
+*.md text eol=lf
+*.ps1 text eol=crlf
+*.zip binary
+*.exe binary
+*.dll binary
+*.pdb binary
+# Upstream package: bytes must never change (manifest.json holds SHA-256 checksums).
+# Keep this last so it wins over the patterns above.
+setup/** -text -diff

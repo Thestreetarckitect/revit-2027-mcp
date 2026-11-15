@@ -1,0 +1,35 @@
+name: verify
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify checksums, secrets and file sizes
+        run: python3 tools/verify.py
+  powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse-check our PowerShell scripts
+        shell: pwsh
+        run: |
+          $bad = 0
+          foreach ($f in 'install.ps1','tools/verify.ps1') {
+            $errs = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $f), [ref]$null, [ref]$errs)
+            if ($errs) { $errs | ForEach-Object { Write-Host "$f : $_" }; $bad++ }
+          }
+          if ($bad) { exit 1 }
+      - name: Verify checksums with PowerShell
+        shell: pwsh
+        run: ./tools/verify.ps1
+      - name: Installer preview (no changes)
+        shell: pwsh
+        run: ./install.ps1 -WhatIf -Client none

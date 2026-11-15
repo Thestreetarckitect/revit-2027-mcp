@@ -52,6 +52,19 @@ if (-not (Test-Path -LiteralPath $upstream)) {
     throw "Missing setup\install.ps1. Re-clone the repository or download it again."
 }
 
+# Files downloaded as a ZIP carry a "from the internet" mark that blocks scripts
+# under the default RemoteSigned policy. Clear it for this folder only.
+Get-ChildItem -LiteralPath $PSScriptRoot -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Extension -in '.ps1', '.dll', '.exe' } |
+    Unblock-File -ErrorAction SilentlyContinue
+
+# Refuse to install anything that fails its checksum.
+$verify = Join-Path $PSScriptRoot 'tools\verify.ps1'
+if (Test-Path -LiteralPath $verify) {
+    & $verify
+    if (-not $?) { throw 'Checksum verification failed. Download the repository again.' }
+}
+
 $forward = @{}
 if ($Years)           { $forward['Years'] = $Years }
 if ($Client)          { $forward['Client'] = $Client }
