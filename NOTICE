@@ -1,4 +1,4 @@
-Revit 2027 MCP
+TSA Revit 2025 - 2027 MCP
 Packaged distribution by TheStreetArckitect LLC
 
 This product includes software developed by the RvtMcp project.
@@ -7,11 +7,13 @@ This product includes software developed by the RvtMcp project.
   https://github.com/bimwright/rvt-mcp
   Licensed under the Apache License, Version 2.0
 
-This repository redistributes compiled artifacts from that project:
+This repository redistributes compiled artifacts from that project, unmodified,
+in setup/ (the upstream "RvtMcp.Setup" v1.2.2 package for win-x64):
 
-  server/rvt-mcp.exe          RvtMcp MCP server, v0.5.0
-  server/RvtMcp.Server.pdb    debug symbols for the above
-  addin/RvtMcp.Plugin.dll     Revit addin assembly
+  setup/server/*                    RvtMcp MCP server, v1.2.2
+  setup/plugins/RvtMcp.Plugin.R*.zip  Revit add-ins for Revit 2022-2027
+  setup/install.ps1, uninstall*.ps1 upstream installer scripts
+  setup/manifest.json               upstream SHA-256 checksums
 
 Those binaries are the work of the upstream RvtMcp authors and remain under the
 Apache License, Version 2.0. A copy of that license is included in this
@@ -19,14 +21,15 @@ repository as LICENSE.
 
 Changes made in this distribution
 ---------------------------------
-- Packaged for Autodesk Revit 2027 specifically, rather than the upstream
-  multi-year (2022-2027) source tree.
-- Added install.ps1, a simplified per-user deployment script that copies the
-  addin and server into %APPDATA% and %LOCALAPPDATA% without requiring admin.
+- Documented and supported for Autodesk Revit 2025, 2026 and 2027. The package
+  also carries upstream's Revit 2022-2024 add-ins so its checksums verify.
+- Added install.ps1, a wrapper that runs the unmodified setup/install.ps1 and
+  then copies the server to Documents\Codex\rvt-mcp for the Codex desktop app.
 - Added README.md and docs/ written for this distribution, including client
-  configuration for Claude, Codex and Cursor.
-- No modifications to upstream source code. The redistributed binaries are
-  unmodified build outputs.
+  configuration for Claude and Codex.
+- Added checksum verification (tools/verify.ps1, tools/verify.py), CI checks and SECURITY.md.
+- No modifications to upstream source code or to any file inside setup/.
+- Updated from v0.5.0 (Revit 2027 only) to v1.2.2.
 
 Other credits
 -------------

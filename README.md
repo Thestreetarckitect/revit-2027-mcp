@@ -1,18 +1,18 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/Revit-2027-0070AD?style=for-the-badge&logo=autodesk&logoColor=white"/>
+<img src="https://img.shields.io/badge/Revit-2025%20%7C%202026%20%7C%202027-0070AD?style=for-the-badge&logo=autodesk&logoColor=white"/>
 <img src="https://img.shields.io/badge/Claude-MCP-D97757?style=for-the-badge&logo=anthropic&logoColor=white"/>
 <img src="https://img.shields.io/badge/Codex-GPT--6_Astra-000000?style=for-the-badge&logo=openai&logoColor=white"/>
-<img src="https://img.shields.io/badge/Tools-216-7B2D8B?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/Version-0.5.0-2EA043?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Tools-242-7B2D8B?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Version-1.2.2-2EA043?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows&logoColor=white"/>
 
 <br/><br/>
 
-# Revit 2027 MCP
+# TSA Revit 2025 - 2027 MCP
 
-**MCP integration for Autodesk Revit 2027.**  
-Exposes 216 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working inside Codex running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
+**TSA Revit 2025 - 2027 MCP by The Street Arckitect. MCP integration for Autodesk Revit 2025, 2026 and 2027.**  
+Exposes 242 Revit API tools over the Model Context Protocol — query, create, modify, export, clash detect, and automate your BIM model using natural language. Built and documented against Claude Desktop and Claude Code, and confirmed working inside Codex running GPT-6 Astra, since MCP is a client-agnostic stdio standard, not a Claude-only feature.
 
 > *"Think of MCP like a USB-C port for AI — one standard that connects to anything, Claude or Codex included."*
 
@@ -26,7 +26,7 @@ Exposes 216 Revit API tools over the Model Context Protocol — query, create, m
 |---|---------|-------------|
 | 🏗️ | **Architecture** | How Claude connects to Revit via MCP |
 | ⚙️ | **Requirements & Install** | Prerequisites and one-command setup |
-| 🔧 | **216 Tools** | Full capability reference by category |
+| 🔧 | **242 Tools** | Full capability reference by category |
 | ✅ | **What Claude Can Do** | Read, analyze, modify, automate |
 | ⚠️ | **Known Limits** | Constraints to understand before you start |
 | 💬 | **Prompt Strategies** | Templates, role-setting, cheat sheet |
@@ -40,9 +40,9 @@ Exposes 216 Revit API tools over the Model Context Protocol — query, create, m
 ```
 AI client (MCP)  —  Claude Desktop / Claude Code, or Codex (GPT-6 Astra)
       ↕  stdio
-rvt-mcp.exe  (MCP server — .NET 8 self-contained)
+rvt-mcp.exe  (MCP server, self-contained)
       ↕  named pipe + auth token
-RvtMcp.Plugin.dll  (Revit addin)
+RvtMcp.Plugin.dll  (Revit addin, one build per Revit year)
       ↕  Revit API
 .rvt model
 ```
@@ -57,7 +57,7 @@ RvtMcp.Plugin.dll  (Revit addin)
 
 | Requirement | Details |
 |-------------|---------|
-| **Revit** | Autodesk Revit 2027 |
+| **Revit** | Autodesk Revit 2025, 2026 or 2027 (the installer detects each installed year) |
 | **OS** | Windows 10 / 11 x64 |
 | **MCP client** | Claude Desktop or Claude Code with MCP support, **or** Codex with an `mcp_servers` entry (tested running GPT-6 Astra) |
 
@@ -65,21 +65,49 @@ RvtMcp.Plugin.dll  (Revit addin)
 
 ## 🚀 Quick Start
 
+**1. Get the files.** Clone the repository or use **Code, Download ZIP** on GitHub. Extract the ZIP before you run anything.
+
 ```powershell
-.\install.ps1
+git clone https://github.com/Thestreetarckitect/TSA-Revit-2025-2027-MCP
+cd TSA-Revit-2025-2027-MCP
 ```
 
-Deploys automatically — no admin required:
+**2. Close Revit, then run the installer.** It checks every file against its SHA-256 checksum first and stops if one fails.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+The `-ExecutionPolicy Bypass` flag applies to this one run only. It changes no system setting.
+
+To check the files yourself, run `.\tools\verify.ps1`. See [SECURITY.md](SECURITY.md).
+
+Deploys automatically. No admin rights needed:
 
 | Destination | Contents |
 |-------------|----------|
-| `%APPDATA%\Autodesk\Revit\Addins\2027\RvtMcp\` | Addin manifest + DLL |
-| `%LOCALAPPDATA%\RvtMcp\rvt\server\0.5.0\` | MCP server exe |
-| `%USERPROFILE%\Documents\Codex\rvt-mcp\` | MCP server exe (copy for Codex) |
+| `%APPDATA%\Autodesk\Revit\Addins\<year>\` | Add-in manifest and `RvtMcp\` folder, one per detected Revit year (2025, 2026, 2027) |
+| `%LOCALAPPDATA%\Bimwright\rvt-mcp\server\current\` | MCP server |
+| `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json` | Settings. A fresh install seeds `"toolsets": ["all"]` |
+| `%USERPROFILE%\Documents\Codex\rvt-mcp\` | Server copy for the Codex app |
+
+Useful options:
+
+```powershell
+.\install.ps1 -WhatIf                  # preview, change nothing
+.\install.ps1 -Years 2025,2026         # install for specific Revit years
+.\install.ps1 -Client claude           # wire one MCP client
+.\install.ps1 -Client none             # leave client configs alone
+.\install.ps1 -Uninstall               # remove the add-ins
+```
+
+**Upgrading from v0.5.0 (Revit 2027 only):** run `.\install.ps1` again. The upstream installer moves `%LOCALAPPDATA%\RvtMcp\` to `%LOCALAPPDATA%\Bimwright\rvt-mcp\` and replaces the old add-in. The server path changed, so check your client config. Add `-PruneOldServers` to delete the old `0.5.0` folder.
 
 ---
 
 ## 🔌 MCP Client Config
+
+The installer wires every detected client for you and backs up each config to `<config>.bak` first. Restart the client afterwards. To wire by hand:
 
 ### Claude Desktop / Claude Code
 
@@ -87,23 +115,23 @@ Add to `~/.claude.json` under `mcpServers`:
 
 ```json
 "rvt-mcp": {
-  "command": "C:\\Users\\<user>\\AppData\\Local\\RvtMcp\\rvt\\server\\0.5.0\\rvt-mcp.exe",
+  "command": "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe",
   "args": []
 }
 ```
 
 **Verify connection:**
-1. Open Revit 2027 — addin loads automatically on startup
-2. In Claude, run: `get current view info` — should return Revit model state
-3. Check `%LOCALAPPDATA%\RvtMcp\revit-mcp.log` if something fails
+1. Open Revit 2025, 2026 or 2027. The addin loads automatically on startup
+2. In Claude, run: `get current view info`. It should return Revit model state
+3. Check `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvt-mcp.log` if something fails
 
 ### Codex (GPT-6 Astra)
 
 ✅ **Verified working in the Codex app (2026-09-18)** — connected to a live Revit 2027
-model through `Documents\Codex\rvt-mcp\rvt-mcp.exe`. Two steps:
+model (v0.5.0 build) through `Documents\Codex\rvt-mcp\rvt-mcp.exe`. Two steps:
 
 1. **Download and install.** Clone or download this repo and run `.\install.ps1`. It
-   drops a Codex copy of the server at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.
+   drops a Codex copy of the server at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`. If the upstream installer already wired Codex to the `%LOCALAPPDATA%` path, replace that `command` value.
 2. **Register it.** Add to `%USERPROFILE%\.codex\config.toml`, then restart Codex:
 
 ```toml
@@ -128,107 +156,229 @@ approval_mode = "prompt"
 > [docs/mcp-config-codex.md §1a](docs/mcp-config-codex.md).
 
 **Verify connection:**
-1. Open Revit 2027 — addin loads automatically on startup
+1. Open Revit. The addin loads automatically on startup
 2. Inside Codex, run `/mcp` — it should report `rvt-mcp: connected` with the tool count
 3. Run `Get the current Revit view information.` — a response with the active view confirms the server is actually talking to Revit, not just that the tool list loaded
 4. If Codex reports a connected tool server but calls fail, check for a named-pipe access error from a sandboxed session before assuming the addin is broken
 
 ---
 
-## 🔧 216 Available Tools
+## 🔧 242 Available Tools
 
-Enumerated live from `rvt-mcp.exe` v0.5.0 via an MCP `tools/list` handshake.
+Extracted from the v1.2.2 server source. Every tool name carries the `revit_` prefix.
+
+| Setting | Tools exposed |
+|---------|---------------|
+| Fresh install (`toolsets: ["all"]`) | 242 |
+| Bare `rvt-mcp.exe` with no config | 55 (`query`, `create`, `view`, `meta`) |
+| `all` plus adaptive bake | 245 |
+
+Your own `toolsets` choice in `rvtmcp.config.json` survives upgrades. Counts exclude personal baked tools.
 
 <details>
-<summary><strong>🔍 Query & Model Info</strong> · 42</summary>
+<summary><strong>AdaptiveBake</strong> · 3</summary>
 
-`ai_element_filter` · `analyze_geometry_complexity` · `analyze_model_statistics` · `analyze_usage_patterns` · `compute_element_area` · `compute_element_volume` · `compute_room_finishes` · `delete_saved_selection` · `detect_firm_profile` · `detect_system_elements` · `find_elements_in_volume` · `find_overlapping_elements` · `get_assembly_members` · `get_available_family_types` · `get_current_target` · `get_current_view_info` · `get_element_bounding_box` · `get_element_centroid` · `get_element_details` · `get_element_geometry` · `get_element_parameters` · `get_element_relationships` · `get_family_instances` · `get_group_members` · `get_model_warnings_summary` · `get_selected_elements` · `get_type_parameters` · `list_assemblies` · `list_available_targets` · `list_groups` · `list_phases` · `list_saved_selections` · `list_worksets` · `load_selection` · `measure_distance_between_elements` · `project_point_onto_face` · `raycast_from_point` · `save_selection` · `select_elements` · `show_element_in_view` · `show_message` · `switch_target`
+`revit_accept_bake_suggestion` · `revit_dismiss_bake_suggestion` · `revit_list_bake_suggestions`
 
 </details>
 
 <details>
-<summary><strong>✏️ Create Elements</strong> · 39</summary>
+<summary><strong>Annotation</strong> · 14</summary>
 
-`audit_families` · `auto_create_rooms_from_walls` · `create_air_terminal` · `create_area` · `create_cable_tray` · `create_conduit` · `create_detail_line` · `create_dimensions` · `create_duct` · `create_filled_region` · `create_foundation_isolated` · `create_foundation_wall` · `create_grid` · `create_level` · `create_lighting_fixture` · `create_line_based_element` · `create_mep_fitting` · `create_pipe` · `create_point_based_element` · `create_rebar_set` · `create_rebar_stirrup` · `create_room` · `create_room_separator` · `create_space` · `create_structural_beam` · `create_structural_column` · `create_structural_wall` · `create_surface_based_element` · `create_text_note` · `duplicate_family_type` · `export_family_to_path` · `import_cad_to_view` · `list_family_types_in_family` · `list_linked_cad` · `list_loaded_families` · `load_family_from_path` · `rename_family_type` · `replace_family_type` · `unload_family`
-
-</details>
-
-<details>
-<summary><strong>🏷️ Tagging & Annotation</strong> · 11</summary>
-
-`apply_keynote_to_element` · `find_undimensioned_elements` · `find_untagged_elements` · `list_keynotes` · `tag_all_areas` · `tag_all_by_category` · `tag_all_rooms` · `tag_all_walls` · `tag_elements` · `tag_structural_framing` · `wipe_empty_tags`
+`revit_apply_keynote_to_element` · `revit_create_callout_view` · `revit_create_detail_line` · `revit_create_dimensions` · `revit_create_filled_region` · `revit_create_text_note` · `revit_find_undimensioned_elements` · `revit_find_untagged_elements` · `revit_list_keynotes` · `revit_tag_all_by_category` · `revit_tag_all_rooms` · `revit_tag_all_walls` · `revit_tag_elements` · `revit_wipe_empty_tags`
 
 </details>
 
 <details>
-<summary><strong>📋 Schedules, Sheets & Views</strong> · 50</summary>
+<summary><strong>ChangeHistory</strong> · 3</summary>
 
-`activate_view` · `add_schedule_field` · `analyze_sheet_layout` · `analyze_view_naming_patterns` · `apply_filter_to_view` · `apply_schedule_filter_sort` · `apply_view_template` · `assign_revision_to_sheet` · `batch_export_sheets` · `capture_view_image` · `create_callout_view` · `create_placeholder_sheet` · `create_revision` · `create_schedule` · `create_sheet` · `create_view` · `create_view_filter` · `create_view_sheet_set` · `create_view_template_from_view` · `delete_view_template` · `duplicate_sheet` · `duplicate_view_template` · `export_schedule_csv` · `find_schedule_elements` · `get_panel_schedule` · `get_print_settings` · `get_schedule_data` · `get_schedule_definition` · `get_schedule_formulas` · `get_titleblock_parameters` · `get_view_visibility` · `list_revisions` · `list_schedules` · `list_sheets` · `list_titleblocks` · `list_view_filters` · `list_view_templates` · `place_schedule_on_sheet` · `place_view_on_sheet` · `remove_filter_from_view` · `renumber_sheets` · `set_titleblock_parameters` · `set_view_crop` · `set_view_phase` · `set_view_scale` · `suggest_view_name_corrections` · `update_schedule_field` · `workflow_clash_review` · `workflow_sheet_set` · `workflow_view_cleanup`
-
-</details>
-
-<details>
-<summary><strong>🎛️ Parameters & Materials</strong> · 20</summary>
-
-`assign_material_to_element` · `bind_shared_parameter` · `create_material` · `create_project_parameter` · `create_shared_parameter` · `duplicate_material` · `export_shared_parameter_file` · `get_material_properties` · `get_material_quantities` · `get_material_takeoff` · `list_materials` · `list_project_parameter_bindings` · `list_project_parameters` · `list_shared_parameters` · `remove_parameter_binding` · `set_material_appearance` · `set_material_identity` · `set_material_structural_asset` · `set_material_thermal_asset` · `set_parameter_value_by_guid`
+`revit_get_change_records` · `revit_record_change` · `revit_resolve_history_identity`
 
 </details>
 
 <details>
-<summary><strong>🔄 Modify & Automate</strong> · 12</summary>
+<summary><strong>Create</strong> · 7</summary>
 
-`batch_execute` · `clear_element_overrides` · `override_element_graphics` · `purge_unused` · `send_code_to_revit` · `set_category_visibility` · `set_element_phase` · `set_filter_overrides` · `set_project_base_point` · `set_project_info` · `set_structural_load` · `set_system_classification`
-
-</details>
-
-<details>
-<summary><strong>📤 Export & Capture</strong> · 11</summary>
-
-`export_dgn` · `export_dwf` · `export_dwg` · `export_elements_data` · `export_fbx` · `export_gbxml` · `export_ifc` · `export_image` · `export_nwc` · `export_pdf` · `export_room_data`
+`revit_create_grid` · `revit_create_group_from_elements` · `revit_create_level` · `revit_create_line_based_element` · `revit_create_point_based_element` · `revit_create_room` · `revit_create_surface_based_element`
 
 </details>
 
 <details>
-<summary><strong>🔎 Clash & QC</strong> · 2</summary>
+<summary><strong>Delete</strong> · 1</summary>
 
-`clash_detection` · `find_mep_disconnects`
-
-</details>
-
-<details>
-<summary><strong>📐 MEP & Structural</strong> · 8</summary>
-
-`analyze_mep_network` · `analyze_structural_connections` · `connect_mep_elements` · `get_mep_element_connectors` · `get_structural_loads` · `get_system_inventory` · `list_mep_systems` · `list_rebar`
+`revit_delete_element`
 
 </details>
 
 <details>
-<summary><strong>🔗 Links & Coordination</strong> · 7</summary>
+<summary><strong>Export</strong> · 16</summary>
 
-`acquire_coordinates_from_link` · `get_link_elements` · `link_revit_model` · `list_linked_models` · `publish_coordinates_to_link` · `reload_link` · `unload_link`
-
-</details>
-
-<details>
-<summary><strong>🏠 Rooms, Areas & Spaces</strong> · 5</summary>
-
-`get_room_boundaries` · `get_room_openings` · `list_areas` · `list_rooms` · `workflow_room_documentation`
+`revit_batch_export_sheets` · `revit_create_view_sheet_set` · `revit_export_dgn` · `revit_export_dwf` · `revit_export_dwg` · `revit_export_elements_data` · `revit_export_fbx` · `revit_export_gbxml` · `revit_export_ifc` · `revit_export_image` · `revit_export_nwc` · `revit_export_pdf` · `revit_export_room_data` · `revit_export_schedule_csv` · `revit_get_print_settings` · `revit_list_export_settings`
 
 </details>
 
 <details>
-<summary><strong>🧰 Workflows & Baked Tools</strong> · 6</summary>
+<summary><strong>Failure</strong> · 3</summary>
 
-`list_baked_tools` · `run_baked_tool` · `workflow_data_roundtrip` · `workflow_model_audit` · `workflow_naming_normalization` · `workflow_takeoff_report`
+`revit_get_failure_records` · `revit_get_operation_status` · `revit_lookup_message`
 
 </details>
 
 <details>
-<summary><strong>🧩 Other</strong> · 3</summary>
+<summary><strong>Families</strong> · 10</summary>
 
-`create_group_from_elements` · `get_schedulable_fields` · `list_export_settings`
+`revit_audit_families` · `revit_duplicate_family_type` · `revit_export_family_to_path` · `revit_get_family_instances` · `revit_list_family_types_in_family` · `revit_list_loaded_families` · `revit_load_family_from_path` · `revit_rename_family_type` · `revit_replace_family_type` · `revit_unload_family`
 
 </details>
+
+<details>
+<summary><strong>Geometry</strong> · 12</summary>
+
+`revit_analyze_geometry_complexity` · `revit_clash_detection` · `revit_compute_element_area` · `revit_compute_element_volume` · `revit_find_elements_in_volume` · `revit_find_overlapping_elements` · `revit_get_element_bounding_box` · `revit_get_element_centroid` · `revit_get_element_geometry` · `revit_measure_distance_between_elements` · `revit_project_point_onto_face` · `revit_raycast_from_point`
+
+</details>
+
+<details>
+<summary><strong>Graphics</strong> · 12</summary>
+
+`revit_apply_filter_to_view` · `revit_clear_element_overrides` · `revit_create_view_filter` · `revit_get_view_visibility` · `revit_list_phases` · `revit_list_view_filters` · `revit_override_element_graphics` · `revit_remove_filter_from_view` · `revit_set_category_visibility` · `revit_set_element_phase` · `revit_set_filter_overrides` · `revit_set_view_phase`
+
+</details>
+
+<details>
+<summary><strong>Health</strong> · 1</summary>
+
+`revit_health`
+
+</details>
+
+<details>
+<summary><strong>Links</strong> · 12</summary>
+
+`revit_acquire_coordinates_from_link` · `revit_get_link_coordinate_system` · `revit_get_link_elements` · `revit_get_project_coordinate_system` · `revit_import_cad_to_view` · `revit_link_revit_model` · `revit_list_linked_cad` · `revit_list_linked_models` · `revit_publish_coordinates_to_link` · `revit_reload_link` · `revit_set_project_base_point` · `revit_unload_link`
+
+</details>
+
+<details>
+<summary><strong>Lint</strong> · 4</summary>
+
+`revit_analyze_view_naming_patterns` · `revit_detect_firm_profile` · `revit_get_model_warnings_summary` · `revit_suggest_view_name_corrections`
+
+</details>
+
+<details>
+<summary><strong>Materials</strong> · 10</summary>
+
+`revit_assign_material_to_element` · `revit_create_material` · `revit_duplicate_material` · `revit_get_material_properties` · `revit_get_material_takeoff` · `revit_list_materials` · `revit_set_material_appearance` · `revit_set_material_identity` · `revit_set_material_structural_asset` · `revit_set_material_thermal_asset`
+
+</details>
+
+<details>
+<summary><strong>Mep</strong> · 16</summary>
+
+`revit_analyze_mep_network` · `revit_connect_mep_elements` · `revit_create_air_terminal` · `revit_create_cable_tray` · `revit_create_conduit` · `revit_create_duct` · `revit_create_lighting_fixture` · `revit_create_mep_fitting` · `revit_create_pipe` · `revit_detect_system_elements` · `revit_find_mep_disconnects` · `revit_get_mep_element_connectors` · `revit_get_panel_schedule` · `revit_get_system_inventory` · `revit_list_mep_systems` · `revit_set_system_classification`
+
+</details>
+
+<details>
+<summary><strong>Meta</strong> · 10</summary>
+
+`revit_analyze_usage_patterns` · `revit_batch_execute` · `revit_get_current_target` · `revit_list_available_targets` · `revit_list_recent_models` · `revit_open_model` · `revit_purge_unused` · `revit_set_project_info` · `revit_show_message` · `revit_switch_target`
+
+</details>
+
+<details>
+<summary><strong>Modify</strong> · 6</summary>
+
+`revit_assign_elements_to_workset` · `revit_change_element_type` · `revit_color_elements` · `revit_operate_element` · `revit_set_element_parameter_values` · `revit_set_type_parameter_values`
+
+</details>
+
+<details>
+<summary><strong>Organization</strong> · 10</summary>
+
+`revit_apply_view_template` · `revit_create_view_template_from_view` · `revit_delete_saved_selection` · `revit_delete_view_template` · `revit_duplicate_view_template` · `revit_list_saved_selections` · `revit_list_view_templates` · `revit_load_selection` · `revit_save_selection` · `revit_select_elements`
+
+</details>
+
+<details>
+<summary><strong>Parameters</strong> · 8</summary>
+
+`revit_bind_shared_parameter` · `revit_create_project_parameter` · `revit_create_shared_parameter` · `revit_export_shared_parameter_file` · `revit_list_project_parameter_bindings` · `revit_list_shared_parameters` · `revit_remove_parameter_binding` · `revit_set_parameter_value_by_guid`
+
+</details>
+
+<details>
+<summary><strong>Query</strong> · 17</summary>
+
+`revit_ai_element_filter` · `revit_analyze_model_statistics` · `revit_get_assembly_members` · `revit_get_available_family_types` · `revit_get_current_view_info` · `revit_get_element_details` · `revit_get_element_parameters` · `revit_get_element_relationships` · `revit_get_group_members` · `revit_get_material_quantities` · `revit_get_selected_elements` · `revit_get_type_parameters` · `revit_list_assemblies` · `revit_list_groups` · `revit_list_project_parameters` · `revit_list_worksets` · `revit_survey_change_impact`
+
+</details>
+
+<details>
+<summary><strong>Report</strong> · 2</summary>
+
+`revit_get_report_history` · `revit_report_task_result`
+
+</details>
+
+<details>
+<summary><strong>Rooms</strong> · 10</summary>
+
+`revit_auto_create_rooms_from_walls` · `revit_compute_room_finishes` · `revit_create_area` · `revit_create_room_separator` · `revit_create_space` · `revit_get_room_boundaries` · `revit_get_room_openings` · `revit_list_areas` · `revit_list_rooms` · `revit_tag_all_areas`
+
+</details>
+
+<details>
+<summary><strong>Schedule</strong> · 10</summary>
+
+`revit_add_schedule_field` · `revit_apply_schedule_filter_sort` · `revit_create_schedule` · `revit_find_schedule_elements` · `revit_get_schedulable_fields` · `revit_get_schedule_data` · `revit_get_schedule_definition` · `revit_get_schedule_formulas` · `revit_list_schedules` · `revit_update_schedule_field`
+
+</details>
+
+<details>
+<summary><strong>SendCode</strong> · 1</summary>
+
+`revit_send_code_to_revit`
+
+</details>
+
+<details>
+<summary><strong>Sheets</strong> · 14</summary>
+
+`revit_align_viewports` · `revit_assign_revision_to_sheet` · `revit_create_placeholder_sheet` · `revit_create_revision` · `revit_create_sheet` · `revit_duplicate_sheet` · `revit_get_titleblock_parameters` · `revit_get_viewport_geometry` · `revit_list_revisions` · `revit_list_sheets` · `revit_list_titleblocks` · `revit_place_schedule_on_sheet` · `revit_renumber_sheets` · `revit_set_titleblock_parameters`
+
+</details>
+
+<details>
+<summary><strong>Structural</strong> · 12</summary>
+
+`revit_analyze_structural_connections` · `revit_create_foundation_isolated` · `revit_create_foundation_wall` · `revit_create_rebar_set` · `revit_create_rebar_stirrup` · `revit_create_structural_beam` · `revit_create_structural_column` · `revit_create_structural_wall` · `revit_get_structural_loads` · `revit_list_rebar` · `revit_set_structural_load` · `revit_tag_structural_framing`
+
+</details>
+
+<details>
+<summary><strong>Toolbaker</strong> · 2</summary>
+
+`revit_list_baked_tools` · `revit_run_baked_tool`
+
+</details>
+
+<details>
+<summary><strong>View</strong> · 8</summary>
+
+`revit_activate_view` · `revit_analyze_sheet_layout` · `revit_capture_view_image` · `revit_create_view` · `revit_place_view_on_sheet` · `revit_set_view_crop` · `revit_set_view_scale` · `revit_show_element_in_view`
+
+</details>
+
+<details>
+<summary><strong>Workflows</strong> · 8</summary>
+
+`revit_workflow_clash_review` · `revit_workflow_data_roundtrip` · `revit_workflow_model_audit` · `revit_workflow_naming_normalization` · `revit_workflow_room_documentation` · `revit_workflow_sheet_set` · `revit_workflow_takeoff_report` · `revit_workflow_view_cleanup`
+
+</details>
+
+Full documentation for each tool lives upstream: [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp). Read-only mode exposes a smaller set. Keep `revit_send_code_to_revit` out of automatic permissions.
 
 ---
 
@@ -264,7 +414,7 @@ Enumerated live from `rvt-mcp.exe` v0.5.0 via an MCP `tools/list` handshake.
 | **Local MCP client required** | Needs a client with MCP support — Claude Desktop, Claude Code, or Codex. Claude's web version does not support MCP |
 | **Revit API boundaries** | Some read-only contexts block writes; the client is bound by the same rules as any plugin |
 | **Prompt precision** | Vague prompts lead to wrong tool calls — specific prompts dramatically improve accuracy |
-| **Tool count drift** | The tool count a client reports can lag this README if you're running a newer local build than the tagged release |
+| **Tool count drift** | The tool count a client reports follows your `toolsets` setting. A bare server shows 55, a full install shows 242 |
 
 ---
 
@@ -275,7 +425,7 @@ Enumerated live from `rvt-mcp.exe` v0.5.0 via an MCP `tools/list` handshake.
 Start every session with this system prompt:
 
 ```
-You are a BIM expert working in Revit 2027.
+You are a BIM expert working in Revit [2025, 2026 or 2027].
 Use only available MCP tools and confirm before making large edits.
 ```
 
@@ -457,13 +607,17 @@ Include headers. Format for Excel import.
 
 | Path | Purpose |
 |------|---------|
-| `addin/RvtMcp.R27.addin` | Revit addin manifest |
-| `addin/RvtMcp.Plugin.dll` | Main addin assembly |
-| `addin/*.dll` | Dependencies (SQLite, Newtonsoft.Json, etc.) |
-| `server/rvt-mcp.exe` | MCP server exe (self-contained .NET 8, 98 MB) |
-| `server/RvtMcp.Server.pdb` | Debug symbols |
-| `revit-2027.json` | Revit 2027 model metadata snapshot |
-| `install.ps1` | One-command install script |
+| `install.ps1` | Wrapper. Runs the upstream installer, then adds the Codex server copy |
+| `setup/` | Upstream RvtMcp Setup v1.2.2, unmodified. `manifest.json` holds SHA-256 checksums for every file |
+| `setup/plugins/RvtMcp.Plugin.R25.zip` | Revit 2025 add-in |
+| `setup/plugins/RvtMcp.Plugin.R26.zip` | Revit 2026 add-in |
+| `setup/plugins/RvtMcp.Plugin.R27.zip` | Revit 2027 add-in |
+| `setup/plugins/RvtMcp.Plugin.R22-R24.zip` | Revit 2022 to 2024 add-ins. Shipped by upstream and kept so checksums verify. Not documented or tested here |
+| `setup/server/` | Self-contained MCP server |
+| `setup/SETUP-ZIP.sha256` | Checksum of the original upstream Setup ZIP |
+| `docs/mcp-config-codex.md` | Codex app configuration |
+
+Do not edit files inside `setup/`. The upstream installer refuses to run when a checksum fails.
 
 ---
 
@@ -482,7 +636,7 @@ Include headers. Format for Excel import.
 
 Built on **[RvtMcp](https://github.com/bimwright/rvt-mcp)** by bimwright — the MCP server
 and Revit addin binaries redistributed here are their work, licensed **Apache-2.0**.
-This repository packages v0.5.0 for Revit 2027 with a per-user installer and client
+This repository packages v1.2.2 for Revit 2025, 2026 and 2027 with a Codex-aware wrapper installer and client
 documentation. See [NOTICE](NOTICE) for full attribution and the list of changes.
 
 Workshop material and prompt strategies adapted from the **"Revit × Claude MCP Workshop"** slide deck by **Abdelrhman Hosny**, BIM/VDC Engineer.
@@ -496,8 +650,8 @@ Codex is a trademark of OpenAI. This project is not affiliated with any of them.
 
 <div align="center">
 
-**Server:** `0.5.0` &nbsp;|&nbsp; **Addin:** `RvtMcp.R27` (Revit 2027 API) &nbsp;|&nbsp; **Tools:** 216 &nbsp;|&nbsp; **Clients:** Claude, Codex (GPT-6 Astra)
+**Server:** `1.2.2` &nbsp;|&nbsp; **Addins:** `R25`, `R26`, `R27` &nbsp;|&nbsp; **Tools:** 242 &nbsp;|&nbsp; **Clients:** Claude, Codex (GPT-6 Astra)
 
-*MCP integration for Autodesk Revit 2027 — Claude and Codex*
+*MCP integration for Autodesk Revit 2025, 2026 and 2027. Claude and Codex*
 
 </div>

@@ -2,11 +2,11 @@
 
 Wiring `rvt-mcp.exe` into the OpenAI Codex app.
 
-For Anthropic clients see [`mcp-config-claude.md`](./mcp-config-claude.md).
+For Anthropic clients see the Claude section in the [README](../README.md#-mcp-client-config).
 
 > **This works because the server speaks stdio.** MCP's stdio transport is client-agnostic,
 > so the same `rvt-mcp.exe` that serves Claude serves Codex with no rebuild and no
-> separate binary. The named pipe in `revit-2027.json` is the *second* hop — server to
+> separate binary. The named pipe the addin publishes is the *second* hop — server to
 > Revit addin — and no client ever sees it.
 
 ---
@@ -24,13 +24,13 @@ silently ignores any `.codex/config.toml` inside a project root, so register Rvt
 
 **Codex Desktop works out of the box once `rvt-mcp.exe` lives inside
 `%USERPROFILE%\Documents\Codex\`.** It cannot launch the server from the default
-`%LOCALAPPDATA%\RvtMcp\...` install path. No config or permission change fixes that —
+`%LOCALAPPDATA%\Bimwright\rvt-mcp\...` install path. No config or permission change fixes that —
 the file's location does.
 
 ### Setup
 
-Run `install.ps1`. Along with the normal install it drops a copy of the server — same
-binary, no rebuild — at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.
+Run `install.ps1`. Along with the normal install it drops a copy of the server folder (same
+binary, no rebuild, with its native SQLite library) at `%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`.
 
 Point `~/.codex/config.toml` at that copy and restart Codex Desktop:
 
@@ -43,8 +43,8 @@ tool_timeout_sec = 120
 ```
 
 ✅ **Verified 2026-09-18** on a live install: Codex Desktop connects to Revit 2027 through
-`%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`, a byte-identical copy of the
-`%LOCALAPPDATA%` one. Re-run `install.ps1`
+`%USERPROFILE%\Documents\Codex\rvt-mcp\rvt-mcp.exe`, a copy of the
+`%LOCALAPPDATA%` one (v0.5.0 build). Re-run `install.ps1`
 after every server upgrade so the Codex copy stays current.
 
 ### Why the default path fails
@@ -56,7 +56,7 @@ turn off.
 
 AppContainer access is **capability-gated, not ACL-gated**. A path outside the package's
 capability set is invisible to the sandboxed process even when NTFS permissions allow
-it. `rvt-mcp.exe` lives in `%LOCALAPPDATA%\RvtMcp\...`, outside that set.
+it. `rvt-mcp.exe` lives in `%LOCALAPPDATA%\Bimwright\rvt-mcp\...`, outside that set.
 
 ### Symptom
 
@@ -181,14 +181,14 @@ default_tools_approval_mode = "approve"
 
 ## 4. Verify
 
-1. Open Revit 2027. The addin loads on startup and writes `revit-2027.json` with a
-   fresh pipe name and auth token.
+1. Open Revit 2025, 2026 or 2027. The addin loads on startup and publishes a
+   fresh pipe name and auth token for the server.
 2. Restart Codex after editing `config.toml`.
-3. Start Codex and run `/mcp` — the server should be connected with 216 tools.
+3. Start Codex and run `/mcp` — the server should be connected with 242 tools (55 if your `toolsets` setting is the bare default).
 4. Ask: `get current view info`. A real response means the whole chain is live —
    Codex to server over stdio, server to addin over the named pipe, addin to the
    Revit API.
-5. On failure read `%LOCALAPPDATA%\RvtMcp\revit-mcp.log`.
+5. On failure read `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvt-mcp.log`.
 
 ---
 
